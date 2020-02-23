@@ -8,6 +8,8 @@ import { ApolloClient } from "apollo-client";
 import { createHttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { setContext } from "apollo-link-context";
+import Template from "./components/Template";
+import Posts from "./components/Posts";
 
 const cache = new InMemoryCache();
 
@@ -36,7 +38,9 @@ const App: React.FC = () => {
       <ApolloProvider client={client}>
         <ApolloHooksProvider client={client}>
           <GlobalStyle />
-          hoge
+          <Template>
+            <Posts />
+          </Template>
         </ApolloHooksProvider>
       </ApolloProvider>
     </Router>
