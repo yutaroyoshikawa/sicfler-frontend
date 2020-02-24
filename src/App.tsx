@@ -10,8 +10,16 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { setContext } from "apollo-link-context";
 import Template from "./components/Template";
 import Posts from "./components/Posts";
+import FaceChecker from "./components/FaceChecker";
 
 const cache = new InMemoryCache();
+
+cache.writeData({
+  data: {
+    age: null,
+    gender: null
+  }
+})
 
 const httpLink = createHttpLink({
   uri: "https://api.sicfler.com/v1/graphql",
@@ -40,6 +48,7 @@ const App: React.FC = () => {
           <GlobalStyle />
           <Template>
             <Posts />
+            <FaceChecker />
           </Template>
         </ApolloHooksProvider>
       </ApolloProvider>

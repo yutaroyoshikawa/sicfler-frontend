@@ -19,9 +19,12 @@ const Wrapper = styled.nav`
   width: 80px;
   height: 100vh;
   display: flex;
+  flex-shrink: 0;
   justify-content: center;
   align-items: center;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  background: #fff;
+  z-index: 99999;
 `;
 
 const BackButton = styled.button`
