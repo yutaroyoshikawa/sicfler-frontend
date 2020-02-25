@@ -15,4 +15,5 @@ export default Template;
 
 const Wrapper = styled.div`
   display: flex;
+  background: #F8F8F8;
 `;

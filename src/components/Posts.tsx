@@ -1,126 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import styled, { css, keyframes } from "styled-components";
+import Post from "./Post";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
-import { usePostsBySicflerIdQuery } from "../gen/graphql-client-api"
+import { usePostsBySicflerIdQuery } from "../gen/graphql-client-api";
 
 const GET_USERINFO = gql`
-{
-  age @client
-  gender @client
-}
+  {
+    age @client
+    gender @client
+  }
 `;
+
+const SICFLER_ID = process.env.REACT_APP_SICFLER_ID || "";
 
 const Posts: React.FC = props => {
   const local = useQuery(GET_USERINFO);
+  const [isFocusPost, setIsFocusPost] = useState<boolean>(false);
+  const [focusPostId, setFocusPostId] = useState<string>("");
   const postsQuery = usePostsBySicflerIdQuery({
     variables: {
-      sicflerId: "hoge"
-    }
+      sicflerId: SICFLER_ID,
+    },
   });
 
+  const onClickPost = (postId: string) => {
+    setIsFocusPost(true);
+    setFocusPostId(postId);
+  };
+
   return (
-    <Wrap>
-    <RowWrap>
-      <Row>
-      {postsQuery.data?.postsBySicflerId.map(post => (
-        <>
-          <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-            <PostName>
-              {post?.name}
-            </PostName>
-          </Card>
-          <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        </>
-      ))}
-      </Row>
-    </RowWrap>
-    <RowWrap>
-      <RowReverse>
-      {postsQuery.data?.postsBySicflerId.map(post => (
-        <>
-          <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-            <PostName>
-              {post?.name}
-            </PostName>
-          </Card>
-          <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        </>
-      ))}
-      </RowReverse>
-    </RowWrap>
-    <RowWrap>
-      <Row>
-      {postsQuery.data?.postsBySicflerId.map(post => (
-        <>
-          <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-            <PostName>
-              {post?.name}
-            </PostName>
-          </Card>
-          <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        <Card key={post?.id} isFocus={local.data.age < 30 + 5 && local.data.age > 20 - 5}>
-          <PostName>
-            {post?.name}
-          </PostName>
-        </Card>
-        </>
-      ))}
-      </Row>
-    </RowWrap>
-    </Wrap>
+    <>
+      <Post
+        isFocus={isFocusPost}
+        postId={focusPostId}
+        handleInfocus={() => setIsFocusPost(false)}
+      />
+      <Wrap>
+        <RowWrap>
+          <RowReverse>
+            {postsQuery.data?.postsBySicflerId.map(post => (
+              <Card
+                key={post?.id}
+                isRecommend={
+                  post?.target.ageGroup! < local.data.age &&
+                  post?.target.ageGroup! + 10 > local.data.age &&
+                  post?.target.gender! === local.data.gender
+                }
+                onClick={() => onClickPost(post?.id!)}
+              >
+                <PostName>{post?.name}</PostName>
+              </Card>
+            ))}
+          </RowReverse>
+        </RowWrap>
+      </Wrap>
+    </>
   );
 };
 
@@ -129,18 +64,15 @@ export default Posts;
 const marquee = keyframes`
 {
   from {
-    transform: translateX(-100%);
+    transform: translateX(-100vw);
   }
   to {
-    transform: translateX(100%);
+    transform: translateX(100vw);
   }
 }
 `;
 
-
-
-const Wrap = styled.div`
-`;
+const Wrap = styled.div``;
 
 const RowWrap = styled.div`
   width: 100vw;
@@ -160,23 +92,25 @@ const RowReverse = styled.ul`
   width: 100vw;
   margin: 100px 0;
   display: flex;
-  animation: ${marquee} linear 50s infinite reverse;
+  animation: ${marquee} linear 20s infinite reverse;
 `;
 
 const Card = styled.li`
-  transition: all .5s ease;
+  transition: all 0.5s ease;
   width: 343px;
   height: 400px;
   background: #fff;
   border-radius: 5px;
   flex-shrink: 0;
   margin: 0 100px;
-  ${(props: { isFocus: boolean }) => props.isFocus
-    ? css`
-    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
-    ` : css`
-    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
-    `}
+  ${(props: { isRecommend: boolean }) =>
+    props.isRecommend
+      ? css`
+          box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
+        `
+      : css`
+          box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+        `}
 `;
 
 const PostName = styled.p`
