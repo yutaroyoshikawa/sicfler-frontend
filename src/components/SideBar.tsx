@@ -61,7 +61,7 @@ const SideBar: React.FC = () => {
       >
         {status => (
           <LogoWrapper transitionStatus={status}>
-            <p>SICFLER</p>
+            <LogoImage src={`${process.env.PUBLIC_URL}/sicfler_logo.png`} alt="ロゴ" />
           </LogoWrapper>
         )}
       </CSSTransition>
@@ -88,6 +88,9 @@ const Wrapper = styled.nav`
 `;
 
 const LogoWrapper = styled.div`
+  padding: 20px;
+  box-sizing: border-box;
+
   ${(props: { transitionStatus: TransitionStatus }) => {
     switch (props.transitionStatus) {
       case "entering":
@@ -116,7 +119,7 @@ const LogoWrapper = styled.div`
   }}
 `;
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.figure`
   ${(props: { transitionStatus: TransitionStatus }) => {
     switch (props.transitionStatus) {
       case "entering":
@@ -154,4 +157,8 @@ const BackButton = styled.button`
 const BackIcon = styled(FontAwesomeIcon)`
   font-size: 50px;
   color: #808080;
+`;
+
+const LogoImage = styled.img`
+  width: 100%;
 `;
