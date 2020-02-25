@@ -33,6 +33,17 @@ const Posts: React.FC = props => {
     setFocusPostId(postId);
   };
 
+  const returnGender = (genderId: number) => {
+    switch (genderId) {
+      case 0:
+        return "male";
+      case 1:
+        return "female";
+      default:
+        return "";
+    }
+  }
+
   return (
     <>
       <Post
@@ -53,9 +64,9 @@ const Posts: React.FC = props => {
               <Card
                 key={post?.id}
                 isRecommend={
-                  post?.target.ageGroup! < local.data.age &&
-                  post?.target.ageGroup! + 10 > local.data.age &&
-                  post?.target.gender! === local.data.gender
+                  post?.target.ageGroup! < local.data.age + 5 &&
+                  post?.target.ageGroup! + 10 > local.data.age - 5 &&
+                  returnGender(post?.target.gender!) === local.data.gender
                 }
                 onClick={() => onClickPost(post?.id!)}
               >
@@ -113,14 +124,62 @@ const Card = styled.li`
   border-radius: 5px;
   flex-shrink: 0;
   margin: 0 100px;
+  position: relative;
   ${(props: { isRecommend: boolean }) =>
     props.isRecommend
       ? css`
           box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
+          &::before {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          &::after {
+            opacity: 1;
+            transform: translateY(0);
+          }
         `
       : css`
           box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+          &::before {
+            opacity: 0;
+            transform: translateY(60px);
+          }
+          &::after {
+            opacity: 0;
+            transform: translateY(60px);
+          }
         `}
+
+  &::before {
+    content: "あなたにおすすめ";
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: -60px;
+    left: calc(343px / 2 - 100px);
+    width: 200px;
+    height: 40px;
+    background: #f00;
+    color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    transition: all .5s ease;
+    transform-origin: left top;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    display: block;
+    margin-left: -15px;
+    border: 15px solid transparent;
+    border-top: 12px solid #f00;
+    top: -20px;
+    left: calc(343px / 2 - 25px);
+    transition: all .5s ease;
+  }
 `;
 
 const PostName = styled.p`
