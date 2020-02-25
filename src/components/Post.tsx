@@ -5,6 +5,7 @@ import { TransitionStatus } from "react-transition-group/Transition";
 import GoogleMapReact from "google-map-react";
 import moment from "moment";
 import { usePostQuery } from "../gen/graphql-client-api";
+import * as CSS from "../commonStyles";
 
 interface Props {
   isFocus: boolean;
@@ -124,12 +125,12 @@ const Post: React.FC<Props> = props => {
 export default Post;
 
 const MapWrapper = styled.div`
-  width: 100vw;
+  width: calc(100vw - ${CSS.SideBarWidth});
   height: 100vh;
   position: fixed;
   z-index: 2;
   top: 0;
-  left: 0;
+  left: ${CSS.SideBarWidth};
 
   ${(props: { transitionStatus: TransitionStatus }) => {
     switch (props.transitionStatus) {

@@ -19,6 +19,7 @@ const Clock: React.FC = () => {
 export default Clock;
 
 const Time = styled.time`
+  font-size: 30px;
   display: inline-block;
   text-align: center;
   letter-spacing: 5px;

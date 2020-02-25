@@ -7,6 +7,7 @@ import { useQuery } from "@apollo/react-hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import Clock from "../components/Clock";
+import * as CSS from "../commonStyles";
 
 const GET_LOCAL_STATE = gql`
   {
@@ -72,7 +73,7 @@ const SideBar: React.FC = () => {
 export default SideBar;
 
 const Wrapper = styled.nav`
-  width: 80px;
+  width: ${CSS.SideBarWidth};
   height: 100vh;
   display: flex;
   flex-shrink: 0;
