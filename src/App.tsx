@@ -8,6 +8,7 @@ import { ApolloClient } from "apollo-client";
 import { createHttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { setContext } from "apollo-link-context";
+import moment from "moment";
 import Template from "./components/Template";
 import Posts from "./components/Posts";
 import FaceChecker from "./components/FaceChecker";
@@ -17,7 +18,8 @@ const cache = new InMemoryCache();
 cache.writeData({
   data: {
     age: null,
-    gender: null
+    gender: null,
+    isFocus: false,
   }
 })
 
@@ -60,5 +62,9 @@ export default App;
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
-  @import url('https://fonts.googleapis.com/css?family=M+PLUS+1p&display=swap');
+  @import url('https://fonts.googleapis.com/css?family=M+PLUS+1p:300,400&display=swap&subset=japanese');
+
+  h1, h2, h3, h4, p, div {
+    font-family: 'M PLUS 1p';
+  }
 `;

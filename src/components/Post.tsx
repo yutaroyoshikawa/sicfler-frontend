@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 import { CSSTransition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
 import GoogleMapReact from "google-map-react";
+import moment from "moment";
 import { usePostQuery } from "../gen/graphql-client-api";
 
 interface Props {
@@ -51,7 +52,7 @@ const Post: React.FC<Props> = props => {
               }}
               defaultZoom={17}
               options={{
-                styles: mapStyle
+                styles: mapStyle,
               }}
             >
               <Pin
@@ -70,23 +71,6 @@ const Post: React.FC<Props> = props => {
       >
         {status => (
           <Wrap transitionStatus={status}>
-            <PostSumbnail sumbnailUrl={data?.post.sumbnail!} />
-            <PostName>{data?.post.name}</PostName>
-            <DateTimeWrap>
-              <DateTime>{new Date(data?.post.start).toUTCString()}</DateTime>
-              <DateTime>{new Date(data?.post.finish).toUTCString()}</DateTime>
-            </DateTimeWrap>
-            <Address>{data?.post.address}</Address>
-            <Discription>{data?.post.discription}</Discription>
-            <PostImagesWrap>
-              {(data?.post.images! as string[]).map(image => (
-                <PostImage
-                  key={image}
-                  src={`${BUCKET_URL}/${image}`}
-                  alt="イベントイメージ"
-                />
-              ))}
-            </PostImagesWrap>
             {(data?.post.visitors as {
               visitorName: string;
               image: string;
@@ -112,6 +96,24 @@ const Post: React.FC<Props> = props => {
                 ))}
               </VisitorsWrap>
             )}
+            <PostSumbnail sumbnailUrl={data?.post.sumbnail!} />
+            <PostName>{data?.post.name}</PostName>
+            <DateTimeWrap>
+              <DateTime>{moment(data?.post.start).format("YYYY/MM/DD hh:mm")}</DateTime>
+              <Hyphen />
+              <DateTime>{moment(data?.post.finish).format("YYYY/MM/DD hh:mm")}</DateTime>
+            </DateTimeWrap>
+            <Discription>{data?.post.discription}</Discription>
+            <Address>{data?.post.address}</Address>
+            <PostImagesWrap>
+              {(data?.post.images! as string[]).map(image => (
+                <PostImage
+                  key={image}
+                  src={`${BUCKET_URL}/${image}`}
+                  alt="イベントイメージ"
+                />
+              ))}
+            </PostImagesWrap>
           </Wrap>
         )}
       </CSSTransition>
@@ -198,12 +200,15 @@ const Wrap = styled.div`
 `;
 
 const PostSumbnail = styled.figure`
+  width: 100%;
+  height: 300px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  border-radius: 10px 10px 0 0;
 
   ${(props: { sumbnailUrl: string }) => css`
-    background-image: src(${BUCKET_URL} / ${props.sumbnailUrl});
+    background-image: url("${BUCKET_URL}/${props.sumbnailUrl}");
   `}
 `;
 
@@ -212,164 +217,202 @@ const PostName = styled.h2`
   color: #707070;
 `;
 
-const DateTimeWrap = styled.div``;
+const DateTimeWrap = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
 
-const DateTime = styled.time``;
+const DateTime = styled.time`
+  font-size: 35px;
+  color: #707070;
+`;
+
+const Hyphen = styled.span`
+  &::before {
+    content: "-";
+    font-size: 35px;
+    color: #707070;
+    margin: 0 20px;
+  }
+`;
 
 const Discription = styled.p``;
 
-const PostImagesWrap = styled.div``;
+const PostImagesWrap = styled.div`
+  margin-top: 64px;
+  width: 100%;
+  overflow-x: scroll;
+`;
 
-const PostImage = styled.img``;
+const PostImage = styled.img`
+  width: 270px;
+  height: 270px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  margin: 0 40px; 
+`;
 
-const Address = styled.p``;
+const Address = styled.p`
 
-const VisitorsWrap = styled.div``;
+`;
 
-const VisitorTitle = styled.h3``;
+const VisitorsWrap = styled.div`
+  margin-bottom: 35px;
+`;
+
+const VisitorTitle = styled.h3`
+  font-size: 35px;
+  color: #707070;
+`;
 
 const VisitorItemWrap = styled.div``;
 
-const VisitorImage = styled.img``;
+const VisitorImage = styled.img`
+  width: 343px;
+  height: 223px;
+`;
 
-const VisitorName = styled.h4``;
+const VisitorName = styled.h4`
+  font-size: 45px;
+  color: #707070;
+`;
 
 const VisitorDiscription = styled.p``;
 
 const mapStyle = [
   {
-      "featureType": "landscape.man_made",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#f7f1df"
-          }
-      ]
+    featureType: "landscape.man_made",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#f7f1df",
+      },
+    ],
   },
   {
-      "featureType": "landscape.natural",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#d0e3b4"
-          }
-      ]
+    featureType: "landscape.natural",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#d0e3b4",
+      },
+    ],
   },
   {
-      "featureType": "landscape.natural.terrain",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "visibility": "off"
-          }
-      ]
+    featureType: "landscape.natural.terrain",
+    elementType: "geometry",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
   },
   {
-      "featureType": "poi",
-      "elementType": "labels",
-      "stylers": [
-          {
-              "visibility": "off"
-          }
-      ]
+    featureType: "poi",
+    elementType: "labels",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
   },
   {
-      "featureType": "poi.business",
-      "elementType": "all",
-      "stylers": [
-          {
-              "visibility": "off"
-          }
-      ]
+    featureType: "poi.business",
+    elementType: "all",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
   },
   {
-      "featureType": "poi.medical",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#fbd3da"
-          }
-      ]
+    featureType: "poi.medical",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#fbd3da",
+      },
+    ],
   },
   {
-      "featureType": "poi.park",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#bde6ab"
-          }
-      ]
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#bde6ab",
+      },
+    ],
   },
   {
-      "featureType": "road",
-      "elementType": "geometry.stroke",
-      "stylers": [
-          {
-              "visibility": "off"
-          }
-      ]
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
   },
   {
-      "featureType": "road",
-      "elementType": "labels",
-      "stylers": [
-          {
-              "visibility": "off"
-          }
-      ]
+    featureType: "road",
+    elementType: "labels",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
   },
   {
-      "featureType": "road.highway",
-      "elementType": "geometry.fill",
-      "stylers": [
-          {
-              "color": "#ffe15f"
-          }
-      ]
+    featureType: "road.highway",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#ffe15f",
+      },
+    ],
   },
   {
-      "featureType": "road.highway",
-      "elementType": "geometry.stroke",
-      "stylers": [
-          {
-              "color": "#efd151"
-          }
-      ]
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [
+      {
+        color: "#efd151",
+      },
+    ],
   },
   {
-      "featureType": "road.arterial",
-      "elementType": "geometry.fill",
-      "stylers": [
-          {
-              "color": "#ffffff"
-          }
-      ]
+    featureType: "road.arterial",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#ffffff",
+      },
+    ],
   },
   {
-      "featureType": "road.local",
-      "elementType": "geometry.fill",
-      "stylers": [
-          {
-              "color": "black"
-          }
-      ]
+    featureType: "road.local",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "black",
+      },
+    ],
   },
   {
-      "featureType": "transit.station.airport",
-      "elementType": "geometry.fill",
-      "stylers": [
-          {
-              "color": "#cfb2db"
-          }
-      ]
+    featureType: "transit.station.airport",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#cfb2db",
+      },
+    ],
   },
   {
-      "featureType": "water",
-      "elementType": "geometry",
-      "stylers": [
-          {
-              "color": "#a2daf2"
-          }
-      ]
-  }
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#a2daf2",
+      },
+    ],
+  },
 ];

@@ -9,6 +9,7 @@ const GET_USERINFO = gql`
   {
     age @client
     gender @client
+    isFocus @client
   }
 `;
 
@@ -16,7 +17,6 @@ const SICFLER_ID = process.env.REACT_APP_SICFLER_ID || "";
 
 const Posts: React.FC = props => {
   const local = useQuery(GET_USERINFO);
-  const [isFocusPost, setIsFocusPost] = useState<boolean>(false);
   const [focusPostId, setFocusPostId] = useState<string>("");
   const postsQuery = usePostsBySicflerIdQuery({
     variables: {
@@ -25,16 +25,26 @@ const Posts: React.FC = props => {
   });
 
   const onClickPost = (postId: string) => {
-    setIsFocusPost(true);
+    local.client.writeData({
+      data: {
+        isFocus: true,
+      },
+    });
     setFocusPostId(postId);
   };
 
   return (
     <>
       <Post
-        isFocus={isFocusPost}
+        isFocus={local.data.isFocus}
         postId={focusPostId}
-        handleInfocus={() => setIsFocusPost(false)}
+        handleInfocus={() =>
+          local.client.writeData({
+            data: {
+              isFocus: true,
+            },
+          })
+        }
       />
       <Wrap>
         <RowWrap>
