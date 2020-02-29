@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { CSSTransition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
 import GoogleMapReact from "google-map-react";
-import moment from "moment";
 import { usePostQuery, Visitor } from "../gen/graphql-client-api";
 import * as CSS from "../commonStyles";
+import DateTime from "./molecules/DateTime";
 
 interface Props {
   isFocus: boolean;
@@ -48,7 +48,7 @@ const Post: React.FC<Props> = props => {
                 key: MAP_API_KEY,
               }}
               defaultCenter={{
-                lat: data?.post.location?.lat!,
+                lat: data?.post.location?.lat! - 0.003,
                 lng: data?.post.location?.lng!,
               }}
               defaultZoom={17}
@@ -73,43 +73,25 @@ const Post: React.FC<Props> = props => {
         mountOnEnter={true}
       >
         {status => (
-          <Wrap transitionStatus={status}>
-            <PostSumbnail sumbnailUrl={data?.post.sumbnail!} />
-            <PostInfoWrapper>
-              <PostName>{data?.post.name}</PostName>
-              {(data?.post.visitors as {
-                visitorName: string;
-                image: string;
-                discription: string;
-              }[]).length > 0 && (
-                <VisitorsWrap>
-                  <VisitorTitle>こんな人が来ました</VisitorTitle>
-                  {(data?.post.visitors as Visitor[]).map(visitor => (
-                    <VisitorItemWrap key={visitor.sumbnail!}>
-                      <VisitorImage
-                        src={`${BUCKET_URL}/${visitor.sumbnail}`}
-                        alt="訪問者イメージ"
-                      />
-                      <VisitorName>{visitor.visitorName}</VisitorName>
-                      <VisitorDiscription>
-                        {visitor.discription}
-                      </VisitorDiscription>
-                    </VisitorItemWrap>
-                  ))}
-                </VisitorsWrap>
-              )}
-              <DateTimeWrap>
-                <DateTime beforeContent="Start">
-                  {moment(data?.post.start).format("YYYY/MM/DD hh:mm")}
-                </DateTime>
-              </DateTimeWrap>
-              <DateTimeWrap>
-                <DateTime beforeContent="Finish">
-                  {moment(data?.post.finish).format("YYYY/MM/DD hh:mm")}
-                </DateTime>
-              </DateTimeWrap>
-              <Discription>{data?.post.discription}</Discription>
-              <Address>{data?.post.address}</Address>
+          <>
+            {status === "entered" && (
+              <PostNameWrap>
+                <Address>{data?.post.address}</Address>
+                <PostName>{data?.post.name}</PostName>
+              </PostNameWrap>
+            )}
+            <Wrap transitionStatus={status}>
+              <SumbnailWrapper>
+                <PostSumbnail sumbnailUrl={data?.post.sumbnail!} />
+                <DateTimes>
+                  <DateTimeWrap>
+                    <DateTime markText="スタート" datetime={new Date(data?.post.start)} />
+                  </DateTimeWrap>
+                  <DateTimeWrap>
+                    <DateTime markText="フィニッシュ" datetime={new Date(data?.post.finish)} />
+                  </DateTimeWrap>
+                </DateTimes>
+              </SumbnailWrapper>
               <PostImagesWrap>
                 {(data?.post.images! as string[]).map(image => (
                   <PostImage
@@ -119,8 +101,36 @@ const Post: React.FC<Props> = props => {
                   />
                 ))}
               </PostImagesWrap>
-            </PostInfoWrapper>
-          </Wrap>
+              <PostInfoWrapper>
+                <OrnerIconWrap>
+                  <OrnerIcon iconUrl={`${BUCKET_URL}/${data?.post.orner.icon}`} />
+                  <OrnerName>{data?.post.orner.name}</OrnerName>
+                </OrnerIconWrap>
+                {(data?.post.visitors as {
+                  visitorName: string;
+                  image: string;
+                  discription: string;
+                }[]).length > 0 && (
+                  <VisitorsWrap>
+                    <VisitorTitle>こんな人が来ました</VisitorTitle>
+                    {(data?.post.visitors as Visitor[]).map(visitor => (
+                      <VisitorItemWrap key={visitor.sumbnail!}>
+                        <VisitorImage
+                          src={`${BUCKET_URL}/${visitor.sumbnail}`}
+                          alt="訪問者イメージ"
+                        />
+                        <VisitorName>{visitor.visitorName}</VisitorName>
+                        <VisitorDiscription>
+                          {visitor.discription}
+                        </VisitorDiscription>
+                      </VisitorItemWrap>
+                    ))}
+                  </VisitorsWrap>
+                )}
+                <Discription>{data?.post.discription}</Discription>
+              </PostInfoWrapper>
+            </Wrap>
+          </>
         )}
       </CSSTransition>
     </>
@@ -166,8 +176,10 @@ const Pin = styled.div<{
   lng: number;
 }>``;
 
+const POST_WRAP_HEIGHT = "868px";
+
 const Wrap = styled.div`
-  width: 872px;
+  max-width: 872px;
   height: 868px;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 10px;
@@ -175,7 +187,7 @@ const Wrap = styled.div`
   position: fixed;
   z-index: 5;
   bottom: 92px;
-  left: calc(50vw - (872px / 2));
+  left: calc(50vw - (872px / 2) + (${CSS.SideBarWidth} / 2));
 
   ${(props: { transitionStatus: TransitionStatus }) => {
     switch (props.transitionStatus) {
@@ -205,9 +217,16 @@ const Wrap = styled.div`
   }}
 `;
 
+const SUMBNAIL_HEIGHT = "463px";
+
+const SumbnailWrapper = styled.div`
+  width: 872px;
+  height: ${SUMBNAIL_HEIGHT};
+`;
+
 const PostSumbnail = styled.figure`
   width: 100%;
-  height: 300px;
+  height: ${SUMBNAIL_HEIGHT};
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -218,63 +237,125 @@ const PostSumbnail = styled.figure`
   `}
 `;
 
+const PostImageHeight = "180px";
+
 const PostInfoWrapper = styled.div`
   width: 100%;
-  height: 569px;
-  padding: 50px;
+  height: calc(${POST_WRAP_HEIGHT} - ${SUMBNAIL_HEIGHT});
+  padding: calc(${PostImageHeight} / 2) 50px 50px 50px;
   overflow-y: scroll;
   box-sizing: border-box;
 `;
 
+const scaleIn = keyframes`
+from {
+  width: 0px;
+}
+to {
+  width: auto;
+}
+`;
+
 const PostName = styled.h2`
-  font-size: 45px;
+  font-size: 69px;
+  max-width: 872px;
+  word-break: break-all;
+  display: inline-block;
+  width: auto;
+  font-weight: bold;
   color: #707070;
+  background: #fff;
+`;
+
+const PostNameWrap = styled.div`
+  max-width: 872px;
+  width: auto;
+  position: fixed;
+  z-index: 5;
+  top: 92px;
+  left: calc(50vw - (872px / 2) + (${CSS.SideBarWidth} / 2));
+  overflow: hidden;
+  animation-name: ${scaleIn};
+  animation-duration: .5s;
+  animation-timing-function: ease-out;
+`;
+
+const DateTimes = styled.div`
+  position: absolute;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 23px;
 `;
 
 const DateTimeWrap = styled.div`
   display: flex;
   align-items: center;
+  margin-bottom: 13px;
 `;
 
-const DateTime = styled.time`
-  font-size: 35px;
-  display: block;
-  color: #707070;
-
-  &::before {
-    content: "${(props: { beforeContent: string }) => props.beforeContent}";
-    width: 50px;
-    height: 20px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 15px;
-    background: #f00;
-    color: #fff;
-    border-color: 5px;
-    border-radius: 5px;
-    padding: 5px;
-    margin-right: 10px;
-  }
+const OrnerIconWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 27px auto;
 `;
 
-const Discription = styled.p``;
+const OrnerIcon = styled.figure`
+  width: 53px;
+  height: 53px;
+  border-radius: 50%;
+  background-image: url(${(props: { iconUrl: string }) => props.iconUrl});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+`;
+
+const OrnerName = styled.p`
+  font-size: 25px;
+  color: #969696;
+  margin-left: 13px;
+  display: inline-block;
+`;
+
+const Discription = styled.p`
+  font-size: 27px;
+  color: #6e6b6b;
+  text-align: justify;
+  line-height: 40px;
+`;
 
 const PostImagesWrap = styled.div`
-  margin-top: 64px;
   width: 100%;
+  position: absolute;
+  display: flex;
+  transform: translateY(calc(${PostImageHeight} / 2 * -1));
   overflow-x: scroll;
 `;
 
 const PostImage = styled.img`
-  width: 270px;
-  height: 270px;
+  width: 297px;
+  display: flex;
+  flex-shrink: 0;
+  height: ${PostImageHeight};
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
   object-fit: cover;
   margin: 0 40px;
+  border-radius: 32px;
 `;
 
-const Address = styled.p``;
+const Address = styled.p`
+  font-size: 26px;
+  max-width: 872px;
+  word-break: break-all;
+  display: block;
+  font-weight: bold;
+  color: #707070;
+  background: #fff;
+  margin-bottom: 14px;
+`;
 
 const VisitorsWrap = styled.div`
   margin-bottom: 35px;
@@ -433,6 +514,81 @@ const mapStyle = [
     stylers: [
       {
         color: "#a2daf2",
+      },
+    ],
+  },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [
+      {
+        visibility: "on",
+      },
+      {
+        color: "#ffffff",
+      },
+      {
+        lightness: 16,
+      },
+    ],
+  },
+  {
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        saturation: 36,
+      },
+      {
+        color: "#333333",
+      },
+      {
+        lightness: 40,
+      },
+    ],
+  },
+  {
+    elementType: "labels.icon",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [
+      {
+        color: "#f2f2f2",
+      },
+      {
+        lightness: 19,
+      },
+    ],
+  },
+  {
+    featureType: "administrative",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#fefefe",
+      },
+      {
+        lightness: 20,
+      },
+    ],
+  },
+  {
+    featureType: "administrative",
+    elementType: "geometry.stroke",
+    stylers: [
+      {
+        color: "#fefefe",
+      },
+      {
+        lightness: 17,
+      },
+      {
+        weight: 1.2,
       },
     ],
   },
