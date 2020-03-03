@@ -11,6 +11,7 @@ import { setContext } from "apollo-link-context";
 import Template from "./components/Template";
 import Posts from "./components/Posts";
 import FaceChecker from "./components/FaceChecker";
+import PointerEffect from "./components/atoms/PointerEffect";
 
 const cache = new InMemoryCache();
 
@@ -43,6 +44,8 @@ const client = new ApolloClient({
 
 const App: React.FC = () => {
   return (
+    <>
+    <PointerEffect />
     <Router>
       <ApolloProvider client={client}>
         <ApolloHooksProvider client={client}>
@@ -54,6 +57,7 @@ const App: React.FC = () => {
         </ApolloHooksProvider>
       </ApolloProvider>
     </Router>
+    </>
   );
 };
 
@@ -61,6 +65,10 @@ export default App;
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
+
+  body {
+    cursor: none;
+  }
 
   h1, h2, h3, h4, p, div {
     font-family: 'M PLUS 1p';
