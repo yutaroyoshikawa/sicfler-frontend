@@ -47,8 +47,10 @@ const SideBar: React.FC = () => {
       >
         {status => (
           <IconWrapper transitionStatus={status}>
+
             <BackButton onClick={() => onClickInfocus()}>
               <BackIcon icon={faAngleLeft} />
+              <BackText>もどる</BackText>
             </BackButton>
           </IconWrapper>
         )}
@@ -120,6 +122,7 @@ const LogoWrapper = styled.div`
 `;
 
 const IconWrapper = styled.figure`
+  transform: translateY(1em);
   ${(props: { transitionStatus: TransitionStatus }) => {
     switch (props.transitionStatus) {
       case "entering":
@@ -148,6 +151,12 @@ const IconWrapper = styled.figure`
   }}
 `;
 
+const BackText = styled.div`
+  font-size: 20px;
+  color: #707070;
+  font-weight: bold;
+`;
+
 const BackButton = styled.button`
   outline: none;
   border: none;
@@ -155,7 +164,8 @@ const BackButton = styled.button`
 `;
 
 const BackIcon = styled(FontAwesomeIcon)`
-  font-size: 50px;
+  font-size: 80px;
+  background: transparent;
   color: #808080;
 `;
 
