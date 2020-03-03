@@ -20,6 +20,8 @@ cache.writeData({
     age: null,
     gender: null,
     isFocus: false,
+    focusLat: 0,
+    focusLng: 0
   }
 })
 

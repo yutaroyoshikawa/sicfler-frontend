@@ -7,11 +7,14 @@ import { useQuery } from "@apollo/react-hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import Clock from "../components/Clock";
+import QrShare from "../components/atoms/QrShare";
 import * as CSS from "../commonStyles";
 
 const GET_LOCAL_STATE = gql`
   {
     isFocus @client
+    focusLat @client
+    focusLng @client
   }
 `;
 
@@ -47,11 +50,14 @@ const SideBar: React.FC = () => {
       >
         {status => (
           <IconWrapper transitionStatus={status}>
-
             <BackButton onClick={() => onClickInfocus()}>
               <BackIcon icon={faAngleLeft} />
               <BackText>もどる</BackText>
             </BackButton>
+            <QrShare
+              lat={local.data.focusLat}
+              lng={local.data.focusLng}
+            />
           </IconWrapper>
         )}
       </CSSTransition>
@@ -63,7 +69,10 @@ const SideBar: React.FC = () => {
       >
         {status => (
           <LogoWrapper transitionStatus={status}>
-            <LogoImage src={`${process.env.PUBLIC_URL}/sicfler_logo.png`} alt="ロゴ" />
+            <LogoImage
+              src={`${process.env.PUBLIC_URL}/sicfler_logo.png`}
+              alt="ロゴ"
+            />
           </LogoWrapper>
         )}
       </CSSTransition>
@@ -122,7 +131,10 @@ const LogoWrapper = styled.div`
 `;
 
 const IconWrapper = styled.figure`
-  transform: translateY(1em);
+  transform: translateY(calc(1em + 105px));
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   ${(props: { transitionStatus: TransitionStatus }) => {
     switch (props.transitionStatus) {
       case "entering":
@@ -161,6 +173,7 @@ const BackButton = styled.button`
   outline: none;
   border: none;
   cursor: pointer;
+  margin: 110px auto;
 `;
 
 const BackIcon = styled(FontAwesomeIcon)`

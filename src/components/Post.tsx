@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import styled, { css, keyframes } from "styled-components";
 import { CSSTransition } from "react-transition-group";
 import { TransitionStatus } from "react-transition-group/Transition";
 import GoogleMapReact from "google-map-react";
+import gql from "graphql-tag";
+import { useQuery } from "@apollo/react-hooks";
 import { usePostQuery, Visitor } from "../gen/graphql-client-api";
 import * as CSS from "../commonStyles";
 import DateTime from "./molecules/DateTime";
+
+const GET_LOCAL_STATE = gql`
+  {
+    focusLat @client
+    focusLng @client
+  }
+`;
 
 interface Props {
   isFocus: boolean;
@@ -19,6 +28,7 @@ const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY || "";
 const BUCKET_URL = process.env.REACT_APP_SICFLER_BUCKET_URL || "";
 
 const Post: React.FC<Props> = props => {
+  const local = useQuery(GET_LOCAL_STATE);
   const [isSkipQuery, setIsSkipQuery] = useState<boolean>(true);
   const { data, refetch, loading } = usePostQuery({
     skip: isSkipQuery,
@@ -32,6 +42,17 @@ const Post: React.FC<Props> = props => {
       });
     }
   }, [props.postId]);
+
+  useMemo(() => {
+    if (data && data.post) {
+      local.client.writeData({
+        data: {
+          focusLat: data.post.location?.lat,
+          focusLng: data.post.location?.lng,
+        }
+      })
+    }
+  }, [data])
 
   return (
     <>
