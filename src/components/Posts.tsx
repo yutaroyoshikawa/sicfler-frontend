@@ -21,12 +21,14 @@ const BUCKET_URL = process.env.REACT_APP_SICFLER_BUCKET_URL || "";
 const useLayout = () => {
   const [row, setRow] = useState<number>(0);
   const [column, setColumn] = useState<number>(0);
-  const POST_HEIGHT = 460;
-  const POST_WIDTH = 500;
+  const POST_HEIGHT = 370;
+  const POST_HEIGHT_MARGIN = 100;
+  const POST_WIDTH = 366;
+  const POST_WIDTH_MARGIN = 100;
 
   useLayoutEffect(() => {
-    setRow(Math.floor(window.innerHeight / POST_HEIGHT));
-    setColumn(Math.floor(window.innerWidth / POST_WIDTH));
+    setRow(Math.floor(window.innerHeight / ((POST_HEIGHT_MARGIN * 2) + POST_HEIGHT)));
+    setColumn(Math.floor(window.innerWidth / ((POST_WIDTH_MARGIN * 2) + POST_WIDTH)));
   }, []);
 
   return {
@@ -291,6 +293,11 @@ const Wrap = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   ${(props: { sumbnailUrl: string }) => css`
     background-image: url("${props.sumbnailUrl}");
