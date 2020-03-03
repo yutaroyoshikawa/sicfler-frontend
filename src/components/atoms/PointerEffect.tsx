@@ -1,6 +1,12 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import styled, { css } from "styled-components";
 
+enum COLORS {
+  "#eeb900" = "#eeb900",
+  "#6DD0A5" = "#6DD0A5",
+  "#f799db" = "#f799db",
+}
+
 interface Coordinate {
   x: number;
   y: number;
@@ -13,12 +19,6 @@ interface Dot {
   pos: Coordinate;
   rot: number;
   vec: Coordinate;
-}
-
-enum COLORS {
-  "#eeb900" = "#eeb900",
-  "#6DD0A5" = "#6DD0A5",
-  "#f799db" = "#f799db",
 }
 
 const PARTICLE_LENGTH = 40;
@@ -41,8 +41,7 @@ function randomEnum<T>(anEnum: T): T[keyof T] {
 }
 
 const initDots = () => {
-  dots = [];
-  [...Array(PARTICLE_LENGTH)].map(() => {
+  const newDots = [...Array(PARTICLE_LENGTH)].map(() => {
     const size = Math.floor(Math.random() * 6) + BASE_SIZE;
     const rot = Math.random() * 360;
     const angle = (rot * Math.PI) / 180;
@@ -62,8 +61,9 @@ const initDots = () => {
         y: Math.sin(angle) * speed,
       },
     };
-    dots.push(dot);
+    return dot;
   });
+  dots = newDots;
 };
 
 const updatedDot = (dot: Dot) => {
@@ -118,11 +118,7 @@ const PointerEffectCanvas: React.FC = () => {
     };
   }, [canvasRef.current]);
 
-  return (
-    <>
-      <Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} ref={canvasRef} />
-    </>
-  );
+  return <Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} ref={canvasRef} />;
 };
 
 const PointerEffect: React.FC = () => {
@@ -146,7 +142,7 @@ const PointerEffect: React.FC = () => {
 
   useMemo(() => {
     pointerCord.x > 0 && pointerCord.y > 0 && setVissibleEffect(true);
-  }, [pointerCord])
+  }, [pointerCord]);
 
   useMemo(() => {
     timeout = setTimeout(() => {
