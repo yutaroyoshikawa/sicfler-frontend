@@ -150,6 +150,10 @@ const PostName = styled.h3`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const DateTimeWrap = styled.div`

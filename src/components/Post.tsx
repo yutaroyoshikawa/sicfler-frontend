@@ -245,6 +245,10 @@ const PostInfoWrapper = styled.div`
   padding: calc(${PostImageHeight} / 2) 50px 50px 50px;
   overflow-y: scroll;
   box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const scaleIn = keyframes`
@@ -278,6 +282,10 @@ const PostNameWrap = styled.div`
   animation-name: ${scaleIn};
   animation-duration: .5s;
   animation-timing-function: ease-out;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const DateTimes = styled.div`
@@ -333,6 +341,10 @@ const PostImagesWrap = styled.div`
   display: flex;
   transform: translateY(calc(${PostImageHeight} / 2 * -1));
   overflow-x: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const PostImage = styled.img`
