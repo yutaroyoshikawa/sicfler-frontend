@@ -173,6 +173,7 @@ const BackButton = styled.button`
   outline: none;
   border: none;
   cursor: pointer;
+  background: transparent;
   margin: 110px auto;
 `;
 

@@ -360,8 +360,9 @@ const PostImagesWrap = styled.div`
   width: 100%;
   position: absolute;
   display: flex;
-  transform: translateY(calc(${PostImageHeight} / 2 * -1));
+  transform: translateY(calc((${PostImageHeight} / 2 + 15px) * -1));
   overflow-x: scroll;
+  padding: 15px 0;
 
   &::-webkit-scrollbar {
     display: none;
@@ -375,8 +376,8 @@ const PostImage = styled.img`
   height: ${PostImageHeight};
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
   object-fit: cover;
-  margin: 0 40px;
   border-radius: 32px;
+  margin: 0 40px;
 `;
 
 const Address = styled.p`
