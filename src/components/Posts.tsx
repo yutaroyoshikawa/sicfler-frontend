@@ -23,9 +23,9 @@ const useLayout = () => {
   const [row, setRow] = useState<number>(0);
   const [column, setColumn] = useState<number>(0);
   const POST_HEIGHT = 370;
-  const POST_HEIGHT_MARGIN = 60;
+  const POST_HEIGHT_MARGIN = 30;
   const POST_WIDTH = 366;
-  const POST_WIDTH_MARGIN = 140;
+  const POST_WIDTH_MARGIN = 70;
 
   useLayoutEffect(() => {
     setRow(
