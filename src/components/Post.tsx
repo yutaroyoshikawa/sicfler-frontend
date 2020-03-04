@@ -8,6 +8,7 @@ import { useQuery } from "@apollo/react-hooks";
 import { usePostQuery, Visitor } from "../gen/graphql-client-api";
 import * as CSS from "../commonStyles";
 import DateTime from "./molecules/DateTime";
+import VisitorSlideShow from "./molecules/VisitorSlideShow";
 
 const GET_LOCAL_STATE = gql`
   {
@@ -134,18 +135,7 @@ const Post: React.FC<Props> = props => {
                 }[]).length > 0 && (
                   <VisitorsWrap>
                     <VisitorTitle>こんな人が来ました</VisitorTitle>
-                    {(data?.post.visitors as Visitor[]).map(visitor => (
-                      <VisitorItemWrap key={visitor.sumbnail!}>
-                        <VisitorImage
-                          src={`${BUCKET_URL}/${visitor.sumbnail}`}
-                          alt="訪問者イメージ"
-                        />
-                        <VisitorName>{visitor.visitorName}</VisitorName>
-                        <VisitorDiscription>
-                          {visitor.discription}
-                        </VisitorDiscription>
-                      </VisitorItemWrap>
-                    ))}
+                    <VisitorSlideShow visitors={data?.post.visitors! as Visitor[]} />
                   </VisitorsWrap>
                 )}
                 <Discription>{data?.post.discription}</Discription>
@@ -265,6 +255,7 @@ const PostInfoWrapper = styled.div`
   height: calc(${POST_WRAP_HEIGHT} - ${SUMBNAIL_HEIGHT});
   padding: calc(${PostImageHeight} / 2) 50px 50px 50px;
   overflow-y: scroll;
+  overflow-x: hidden;
   box-sizing: border-box;
 
   &::-webkit-scrollbar {
@@ -363,6 +354,7 @@ const PostImagesWrap = styled.div`
   transform: translateY(calc((${PostImageHeight} / 2 + 15px) * -1));
   overflow-x: scroll;
   padding: 15px 0;
+  z-index: 5;
 
   &::-webkit-scrollbar {
     display: none;
@@ -393,27 +385,15 @@ const Address = styled.p`
 
 const VisitorsWrap = styled.div`
   margin-bottom: 35px;
+  position: relative;
+  z-index: 4;
 `;
 
 const VisitorTitle = styled.h3`
-  font-size: 35px;
+  font-size: 25px;
   color: #707070;
+  margin-bottom: 16px;
 `;
-
-const VisitorItemWrap = styled.div``;
-
-const VisitorImage = styled.img`
-  width: 343px;
-  height: 223px;
-  object-fit: cover;
-`;
-
-const VisitorName = styled.h4`
-  font-size: 45px;
-  color: #707070;
-`;
-
-const VisitorDiscription = styled.p``;
 
 const mapStyle = [
   {
