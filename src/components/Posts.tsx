@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/react-hooks";
 import { usePostsBySicflerIdQuery } from "../gen/graphql-client-api";
 import ListItemPost from "./organisms/ListItemPost";
 import * as CSS from "../commonStyles";
+import Background from "./atoms/Background";
 
 const GET_USERINFO = gql`
   {
@@ -22,13 +23,17 @@ const useLayout = () => {
   const [row, setRow] = useState<number>(0);
   const [column, setColumn] = useState<number>(0);
   const POST_HEIGHT = 370;
-  const POST_HEIGHT_MARGIN = 100;
+  const POST_HEIGHT_MARGIN = 60;
   const POST_WIDTH = 366;
-  const POST_WIDTH_MARGIN = 100;
+  const POST_WIDTH_MARGIN = 140;
 
   useLayoutEffect(() => {
-    setRow(Math.floor(window.innerHeight / ((POST_HEIGHT_MARGIN * 2) + POST_HEIGHT)));
-    setColumn(Math.floor(window.innerWidth / ((POST_WIDTH_MARGIN * 2) + POST_WIDTH)));
+    setRow(
+      Math.floor(window.innerHeight / (POST_HEIGHT_MARGIN * 2 + POST_HEIGHT))
+    );
+    setColumn(
+      Math.floor(window.innerWidth / (POST_WIDTH_MARGIN * 2 + POST_WIDTH))
+    );
   }, []);
 
   return {
@@ -110,167 +115,178 @@ const Posts: React.FC = props => {
           })
         }
       />
-      <Wrap
-        sumbnailUrl={
-          (postsQuery.data?.postsBySicflerId[0] &&
-            `${BUCKET_URL}/${postsQuery.data?.postsBySicflerId[0]?.sumbnail}`) ||
-          ""
-        }
-      >
-        {postsQuery.data &&
-          postsQuery.data.postsBySicflerId.length > 0 &&
-          [...Array(row)].map((_, currentRow) => (
-            <RowWrap key={currentRow}>
-              {currentRow % 2 === 0 ? (
-                <div>
-                  <Row>
-                    <>
-                      {[...Array(column)].map((_, currentColumn) => {
-                        const index = rowIndex({
-                          columnLength: column,
-                          currentIndex: currentColumn,
-                          currentRow,
-                          postLength: postsQuery.data?.postsBySicflerId!.length,
-                          isDelay: false,
-                        });
+      {/* <Background
+        sumbnails={postsQuery.data && postsQuery.data?.postsBySicflerId!.map(
+          post => post?.sumbnail! as string
+        ) || []}
+      /> */}
+      <Entire>
+        <Wrap
+          sumbnailUrl={
+            (postsQuery.data?.postsBySicflerId[0] &&
+              `${BUCKET_URL}/${postsQuery.data?.postsBySicflerId[0]?.sumbnail}`) ||
+            ""
+          }
+        >
+          {postsQuery.data &&
+            postsQuery.data.postsBySicflerId.length > 0 &&
+            [...Array(row)].map((_, currentRow) => (
+              <RowWrap key={currentRow}>
+                {currentRow % 2 === 0 ? (
+                  <div>
+                    <Row>
+                      <>
+                        {[...Array(column)].map((_, currentColumn) => {
+                          const index = rowIndex({
+                            columnLength: column,
+                            currentIndex: currentColumn,
+                            currentRow,
+                            postLength: postsQuery.data?.postsBySicflerId!
+                              .length,
+                            isDelay: false,
+                          });
 
-                        const post = postsQuery.data?.postsBySicflerId[index];
-                        const gender = returnGender(post?.target.gender!);
+                          const post = postsQuery.data?.postsBySicflerId[index];
+                          const gender = returnGender(post?.target.gender!);
 
-                        return (
-                          <ListItemPost
-                            key={post?.id!}
-                            sumbnailUrl={post?.sumbnail!}
-                            postName={post?.name!}
-                            start={new Date(post?.start)}
-                            finish={new Date(post?.finish!)}
-                            orner={{
-                              name: post?.orner.name!,
-                              iconUrl: `${BUCKET_URL}/${post?.orner.icon}`,
-                            }}
-                            isRecommend={
-                              post?.target.ageGroup! < local.data.age &&
-                              gender === local.data.gender
-                            }
-                            onClick={() => onClickPost(post?.id!)}
-                          />
-                        );
-                      })}
-                    </>
-                  </Row>
-                  <DelayRow>
-                    <>
-                      {[...Array(column)].map((_, currentColumn) => {
-                        const index = rowIndex({
-                          columnLength: column,
-                          currentIndex: currentColumn,
-                          currentRow,
-                          postLength: postsQuery.data?.postsBySicflerId!.length,
-                          isDelay: false,
-                        });
+                          return (
+                            <ListItemPost
+                              key={post?.id!}
+                              sumbnailUrl={post?.sumbnail!}
+                              postName={post?.name!}
+                              start={new Date(post?.start)}
+                              finish={new Date(post?.finish!)}
+                              orner={{
+                                name: post?.orner.name!,
+                                iconUrl: `${BUCKET_URL}/${post?.orner.icon}`,
+                              }}
+                              isRecommend={
+                                post?.target.ageGroup! < local.data.age &&
+                                gender === local.data.gender
+                              }
+                              onClick={() => onClickPost(post?.id!)}
+                            />
+                          );
+                        })}
+                      </>
+                    </Row>
+                    <DelayRow>
+                      <>
+                        {[...Array(column)].map((_, currentColumn) => {
+                          const index = rowIndex({
+                            columnLength: column,
+                            currentIndex: currentColumn,
+                            currentRow,
+                            postLength: postsQuery.data?.postsBySicflerId!
+                              .length,
+                            isDelay: false,
+                          });
 
-                        const post = postsQuery.data?.postsBySicflerId[index];
-                        const gender = returnGender(post?.target.gender!);
+                          const post = postsQuery.data?.postsBySicflerId[index];
+                          const gender = returnGender(post?.target.gender!);
 
-                        return (
-                          <ListItemPost
-                            key={post?.id!}
-                            sumbnailUrl={post?.sumbnail!}
-                            postName={post?.name!}
-                            start={new Date(post?.start)}
-                            finish={new Date(post?.finish!)}
-                            orner={{
-                              name: post?.orner.name!,
-                              iconUrl: `${BUCKET_URL}/${post?.orner.icon}`,
-                            }}
-                            isRecommend={
-                              post?.target.ageGroup! < local.data.age &&
-                              gender === local.data.gender
-                            }
-                            onClick={() => onClickPost(post?.id!)}
-                          />
-                        );
-                      })}
-                    </>
-                  </DelayRow>
-                </div>
-              ) : (
-                <div>
-                  <RowReverse>
-                    <>
-                      {[...Array(column)].map((_, currentColumn) => {
-                        const index = rowIndex({
-                          columnLength: column,
-                          currentIndex: currentColumn,
-                          currentRow,
-                          postLength: postsQuery.data?.postsBySicflerId!.length,
-                          isDelay: false,
-                        });
+                          return (
+                            <ListItemPost
+                              key={post?.id!}
+                              sumbnailUrl={post?.sumbnail!}
+                              postName={post?.name!}
+                              start={new Date(post?.start)}
+                              finish={new Date(post?.finish!)}
+                              orner={{
+                                name: post?.orner.name!,
+                                iconUrl: `${BUCKET_URL}/${post?.orner.icon}`,
+                              }}
+                              isRecommend={
+                                post?.target.ageGroup! < local.data.age &&
+                                gender === local.data.gender
+                              }
+                              onClick={() => onClickPost(post?.id!)}
+                            />
+                          );
+                        })}
+                      </>
+                    </DelayRow>
+                  </div>
+                ) : (
+                  <div>
+                    <RowReverse>
+                      <>
+                        {[...Array(column)].map((_, currentColumn) => {
+                          const index = rowIndex({
+                            columnLength: column,
+                            currentIndex: currentColumn,
+                            currentRow,
+                            postLength: postsQuery.data?.postsBySicflerId!
+                              .length,
+                            isDelay: false,
+                          });
 
-                        const post = postsQuery.data?.postsBySicflerId[index];
-                        const gender = returnGender(post?.target.gender!);
+                          const post = postsQuery.data?.postsBySicflerId[index];
+                          const gender = returnGender(post?.target.gender!);
 
-                        return (
-                          <ListItemPost
-                            key={post?.id!}
-                            sumbnailUrl={post?.sumbnail!}
-                            postName={post?.name!}
-                            start={new Date(post?.start)}
-                            finish={new Date(post?.finish!)}
-                            orner={{
-                              name: post?.orner.name!,
-                              iconUrl: `${BUCKET_URL}/${post?.orner.icon}`,
-                            }}
-                            isRecommend={
-                              post?.target.ageGroup! < local.data.age &&
-                              gender === local.data.gender
-                            }
-                            onClick={() => onClickPost(post?.id!)}
-                          />
-                        );
-                      })}
-                    </>
-                  </RowReverse>
-                  <DelayRowReverse>
-                    <>
-                      {[...Array(column)].map((_, currentColumn) => {
-                        const index = rowIndex({
-                          columnLength: column,
-                          currentIndex: currentColumn,
-                          currentRow,
-                          postLength: postsQuery.data?.postsBySicflerId!.length,
-                          isDelay: false,
-                        });
+                          return (
+                            <ListItemPost
+                              key={post?.id!}
+                              sumbnailUrl={post?.sumbnail!}
+                              postName={post?.name!}
+                              start={new Date(post?.start)}
+                              finish={new Date(post?.finish!)}
+                              orner={{
+                                name: post?.orner.name!,
+                                iconUrl: `${BUCKET_URL}/${post?.orner.icon}`,
+                              }}
+                              isRecommend={
+                                post?.target.ageGroup! < local.data.age &&
+                                gender === local.data.gender
+                              }
+                              onClick={() => onClickPost(post?.id!)}
+                            />
+                          );
+                        })}
+                      </>
+                    </RowReverse>
+                    <DelayRowReverse>
+                      <>
+                        {[...Array(column)].map((_, currentColumn) => {
+                          const index = rowIndex({
+                            columnLength: column,
+                            currentIndex: currentColumn,
+                            currentRow,
+                            postLength: postsQuery.data?.postsBySicflerId!
+                              .length,
+                            isDelay: false,
+                          });
 
-                        const post = postsQuery.data?.postsBySicflerId[index];
-                        const gender = returnGender(post?.target.gender!);
+                          const post = postsQuery.data?.postsBySicflerId[index];
+                          const gender = returnGender(post?.target.gender!);
 
-                        return (
-                          <ListItemPost
-                            key={post?.id!}
-                            sumbnailUrl={post?.sumbnail!}
-                            postName={post?.name!}
-                            start={new Date(post?.start)}
-                            finish={new Date(post?.finish!)}
-                            orner={{
-                              name: post?.orner.name!,
-                              iconUrl: `${BUCKET_URL}/${post?.orner.icon}`,
-                            }}
-                            isRecommend={
-                              post?.target.ageGroup! < local.data.age &&
-                              gender === local.data.gender
-                            }
-                            onClick={() => onClickPost(post?.id!)}
-                          />
-                        );
-                      })}
-                    </>
-                  </DelayRowReverse>
-                </div>
-              )}
-            </RowWrap>
-          ))}
-      </Wrap>
+                          return (
+                            <ListItemPost
+                              key={post?.id!}
+                              sumbnailUrl={post?.sumbnail!}
+                              postName={post?.name!}
+                              start={new Date(post?.start)}
+                              finish={new Date(post?.finish!)}
+                              orner={{
+                                name: post?.orner.name!,
+                                iconUrl: `${BUCKET_URL}/${post?.orner.icon}`,
+                              }}
+                              isRecommend={
+                                post?.target.ageGroup! < local.data.age &&
+                                gender === local.data.gender
+                              }
+                              onClick={() => onClickPost(post?.id!)}
+                            />
+                          );
+                        })}
+                      </>
+                    </DelayRowReverse>
+                  </div>
+                )}
+              </RowWrap>
+            ))}
+        </Wrap>
+      </Entire>
     </>
   );
 };
@@ -288,8 +304,14 @@ const marquee = keyframes`
 }
 `;
 
-const Wrap = styled.div`
+const Entire = styled.div`
+  display: flex;
   height: 100vh;
+  width: 100%;
+  align-items: center;
+`;
+
+const Wrap = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -326,7 +348,7 @@ const RowWrap = styled.div`
 const Row = styled.ul`
   height: 410px;
   width: 100vw;
-  margin: 100px 0;
+  margin: 30px 0;
   display: flex;
   animation: ${marquee} linear 60s infinite;
 `;
@@ -334,7 +356,7 @@ const Row = styled.ul`
 const DelayRow = styled.ul`
   height: 410px;
   width: 100vw;
-  margin: 100px 0;
+  margin: 30px 0;
   display: flex;
   top: 0;
   position: absolute;
@@ -347,7 +369,7 @@ const DelayRow = styled.ul`
 const RowReverse = styled.ul`
   height: 410px;
   width: calc(100vw - ${CSS.SideBarWidth});
-  margin: 100px 0;
+  margin: 30px 0;
   display: flex;
   animation: ${marquee} linear 60s infinite reverse;
 `;
@@ -355,7 +377,7 @@ const RowReverse = styled.ul`
 const DelayRowReverse = styled.ul`
   height: 410px;
   width: 100vw;
-  margin: 100px 0;
+  margin: 30px 0;
   display: flex;
   top: 0;
   position: absolute;

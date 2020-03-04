@@ -58,7 +58,7 @@ const Wrap = styled.div`
   position: relative;
   z-index: 3;
   transition: all 0.5s ease;
-  margin: 0 100px;
+  margin: 60px 70px 0 70px;
 
   ${(props: Pick<Props, "isRecommend">) =>
     props.isRecommend
