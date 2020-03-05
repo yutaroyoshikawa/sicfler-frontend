@@ -78,12 +78,12 @@ const Post: React.FC<Props> = props => {
                 styles: mapStyle,
               }}
             >
-              <Pin
-                lat={data?.post.location?.lat!}
-                lng={data?.post.location?.lng!}
-              >
-                ここ
-              </Pin>
+              {props.isFocus && data && data.post && !loading && (
+                <Pin
+                  lat={data?.post.location?.lat!}
+                  lng={data?.post.location?.lng!}
+                />
+              )}
             </GoogleMapReact>
           </MapWrapper>
         )}
@@ -185,7 +185,35 @@ const MapWrapper = styled.div`
 const Pin = styled.div<{
   lat: number;
   lng: number;
-}>``;
+}>`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: #e95464;
+  &:before{
+    position: absolute;
+    bottom: -7px;
+    border: solid transparent;
+    border-top-color: #e95464;
+    border-width: 13.7px 10px 0 10px;
+    border-radius: 10px;
+    display: block;
+    content: '';
+  }
+  &:after{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background: #fff;
+    display: block;
+    content: '';
+  }
+  transform: scale(3);
+`;
 
 const POST_WRAP_HEIGHT = "868px";
 
