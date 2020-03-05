@@ -8,7 +8,7 @@ import { faQrcode } from "@fortawesome/free-solid-svg-icons";
 import QRCode from "qrcode.react";
 import * as CSS from "../../commonStyles";
 
-const TRANSITION_DURATION = 400;
+const TRANSITION_DURATION = 600;
 
 interface Props {
   lat: number;
@@ -113,11 +113,12 @@ const QrWrapper = styled.div`
       case "entering":
         return css`
           opacity: 0;
+          transform: scale(0.8);
         `;
       case "entered":
         return css`
           opacity: 1;
-          transition: opacity ${TRANSITION_DURATION}ms ease;
+          transition: all ${TRANSITION_DURATION}ms cubic-bezier(0.740, -0.600, 0.105, 1.620);
           transition-delay: 200ms;
         `;
       case "exited":
@@ -127,7 +128,8 @@ const QrWrapper = styled.div`
       case "exiting":
         return css`
           opacity: 0;
-          transition: opacity ${TRANSITION_DURATION}ms ease;
+          transform: scale(0.8);
+          transition: all ${TRANSITION_DURATION}ms cubic-bezier(0.740, -0.600, 0.105, 1.620);
         `;
     }
   }}
@@ -165,6 +167,11 @@ const QrButton = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  transition: all .4s ease;
+
+  &:active {
+    transform: scale(0.8);
+  }
 `;
 
 const QrButtonDescription = styled.p`

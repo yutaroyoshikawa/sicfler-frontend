@@ -116,6 +116,10 @@ const Wrap = styled.div`
     left: calc(343px / 2 - 25px);
     transition: all 0.5s ease;
   }
+
+  &:active {
+    transform: scale(0.8);
+  }
 `;
 
 const Sumbnail = styled.figure`
