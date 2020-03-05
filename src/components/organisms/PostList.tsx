@@ -22,13 +22,12 @@ interface Props {
   isReverse: boolean;
 }
 
-let interval = 0;
-let scrollAmount = 0;
-
 const ITEM_COUNT = 99999999999;
 
 const PostList: React.FC<Props> = props => {
   const listRef = useRef<FixedSizeList>(null);
+  let interval = 0;
+  let scrollAmount = 0;
 
   useEffect(() => {
     const scrollInfinity = () => {
