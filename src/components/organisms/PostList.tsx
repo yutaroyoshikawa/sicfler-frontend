@@ -25,6 +25,8 @@ interface Props {
 let interval = 0;
 let scrollAmount = 0;
 
+const ITEM_COUNT = 99999999999;
+
 const PostList: React.FC<Props> = props => {
   const listRef = useRef<FixedSizeList>(null);
 
@@ -46,7 +48,7 @@ const PostList: React.FC<Props> = props => {
   return (
     <List
       ref={listRef}
-      itemCount={99999999999}
+      itemCount={ITEM_COUNT}
       width={window.innerWidth - 130}
       height={490}
       itemSize={506}
@@ -61,6 +63,10 @@ const PostList: React.FC<Props> = props => {
           }
 
           return itemIndex % props.items.length;
+        };
+
+        if (index === ITEM_COUNT) {
+          scrollAmount = 0;
         };
 
         const prop = props.items[getItemIndex(index)];
