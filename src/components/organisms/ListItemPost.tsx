@@ -118,7 +118,7 @@ const Wrap = styled.div`
   }
 
   &:active {
-    transform: scale(0.8);
+    transform: scale(0.9);
   }
 `;
 
