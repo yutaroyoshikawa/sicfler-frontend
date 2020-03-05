@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { FixedSizeList } from "react-window";
-import ListItemPost from "./ListItemPost";
+import ListItemPost from "../molecules/ListItemPost";
 
 interface Props {
   items: {
@@ -23,10 +23,10 @@ interface Props {
 }
 
 let interval = 0;
+let scrollAmount = 0;
 
 const PostList: React.FC<Props> = props => {
   const listRef = useRef<FixedSizeList>(null);
-  let scrollAmount = 0;
 
   useEffect(() => {
     const scrollInfinity = () => {

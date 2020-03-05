@@ -2,7 +2,7 @@ import React from "react";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 import styled, { css } from "styled-components";
-import DateTime from "../molecules/DateTime";
+import DateTime from "./DateTime";
 import OrnerIcon from "../atoms/OrnerIcon";
 
 const GET_USERINFO = gql`
