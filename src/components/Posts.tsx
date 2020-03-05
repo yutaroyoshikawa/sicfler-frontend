@@ -79,7 +79,7 @@ const Posts: React.FC = () => {
           {postsQuery.data &&
             postsQuery.data.postsBySicflerId.length > 0 &&
             [...Array(row)].map((_, currentRow) => (
-              <RowWrap>
+              <RowWrap key={currentRow}>
                 <PostList
                   items={postsQuery.data?.postsBySicflerId!.map(post => ({
                     sumbnailUrl: post?.sumbnail!,
