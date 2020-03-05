@@ -131,7 +131,6 @@ const LogoWrapper = styled.div`
 `;
 
 const IconWrapper = styled.figure`
-  transform: translateY(calc(1em + 105px));
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -140,23 +139,23 @@ const IconWrapper = styled.figure`
       case "entering":
         return css`
           opacity: 0;
-          transform: translateX(20px);
+          transform: translateX(20px) translateY(1em);
         `;
       case "entered":
         return css`
           opacity: 1;
-          transform: translateX(0);
+          transform: translateX(0) translateY(1em);
           transition: all ${BUTTON_TRANSITION_DURATION}ms ease;
         `;
       case "exited":
         return css`
           opacity: 1;
-          transform: translateX(0);
+          transform: translateX(0) translateY(1em);
         `;
       case "exiting":
         return css`
           opacity: 0;
-          transform: translateX(20px);
+          transform: translateX(20px) translateY(1em);
           transition: all ${BUTTON_TRANSITION_DURATION}ms ease;
         `;
     }
