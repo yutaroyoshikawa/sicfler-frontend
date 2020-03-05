@@ -52,6 +52,7 @@ const PostList: React.FC<Props> = props => {
       itemSize={506}
       direction={props.isReverse ? "rtl" : "ltr"}
       layout="horizontal"
+      onScroll={e => scrollAmount = e.scrollOffset}
     >
       {({ index, style }) => {
         const getItemIndex = (itemIndex: number): number => {
