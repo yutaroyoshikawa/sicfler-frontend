@@ -1,7 +1,16 @@
 import React from "react";
+import gql from "graphql-tag";
+import { useQuery } from "@apollo/react-hooks";
 import styled, { css } from "styled-components";
 import DateTime from "../molecules/DateTime";
 import OrnerIcon from "../atoms/OrnerIcon";
+
+const GET_USERINFO = gql`
+  {
+    age @client
+    gender @client
+  }
+`;
 
 const BUCKET_URL = process.env.REACT_APP_SICFLER_BUCKET_URL || "";
 
@@ -14,19 +23,45 @@ interface Props {
     name: string;
     iconUrl: string;
   };
-  isRecommend: boolean;
+  target: {
+    ageGroup: number;
+    gender: number;
+  };
   onClick: () => void;
 }
 
+const returnGender = (genderId: number) => {
+  switch (genderId) {
+    case 0:
+      return "male";
+    case 1:
+      return "female";
+    default:
+      return "";
+  }
+};
+
 const ListItemPost: React.FC<Props> = props => {
+  const local = useQuery(GET_USERINFO);
+
   return (
-    <Wrap onClick={() => props.onClick()} isRecommend={props.isRecommend}>
+    <Wrap
+      onClick={() => props.onClick()}
+      isRecommend={
+        props.target.ageGroup < local.data.age &&
+        returnGender(props.target.gender) === local.data.gender
+      }
+    >
       <Sumbnail imageUrl={`${BUCKET_URL}/${props.sumbnailUrl}`} />
       <div>
         <PostName>{props.postName}</PostName>
         <PostInfoWrap>
           <DateTimeWrap>
-            <DateTime type="listItem" markText="スタート" datetime={props.start} />
+            <DateTime
+              type="listItem"
+              markText="スタート"
+              datetime={props.start}
+            />
           </DateTimeWrap>
           <DateTimeWrap>
             <DateTime
@@ -57,10 +92,10 @@ const Wrap = styled.div`
   flex-shrink: 0;
   position: relative;
   z-index: 3;
-  transition: all 0.5s ease;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
   margin: 60px 70px 0 70px;
 
-  ${(props: Pick<Props, "isRecommend">) =>
+  ${(props: {isRecommend: boolean}) =>
     props.isRecommend
       ? css`
           box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
@@ -100,7 +135,7 @@ const Wrap = styled.div`
     color: #fff;
     border-radius: 20px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-    transition: all 0.5s ease;
+    transition: transform 0.5s ease, opacity 0.5s ease;
     transform-origin: left top;
   }
 
@@ -114,7 +149,7 @@ const Wrap = styled.div`
     border-top: 12px solid #faa44d;
     top: -20px;
     left: calc(343px / 2 - 25px);
-    transition: all 0.5s ease;
+    transition: transform 0.5s ease, opacity 0.5s ease;
   }
 
   &:active {
