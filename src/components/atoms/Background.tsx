@@ -1,6 +1,7 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as THREE from "three";
+import gsap from "gsap";
 
 const fragment = `
 // #pragma glslify: random = require(glsl-random)
@@ -15,6 +16,7 @@ varying vec2 vUv;
 
 uniform sampler2D uTexture1;//sampler2Dは変数の型
 uniform sampler2D uTexture2;
+uniform sampler2D uTexture3;
 uniform vec2 resolution;
 uniform vec2 imageResolution;
 
@@ -44,7 +46,7 @@ void main() {
       vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
     );
 
-    vec4 disp = texture2D(u_texture3, uv);
+    vec4 disp = texture2D(uTexture3, uv);
     // vec4 black = texture2D(u_texture1, uv);
     //texture2DはGLSLの組み込み関数。テクスチャから色情報を抜き出すもの。だからoutputはテクスチャの色情報。
     //第一引数はテクスチャ、第二引数はUV座標。
@@ -65,8 +67,8 @@ void main() {
     //disp変数はvec4型(r,g,b,a)。disp.rはその第一引数を取り出している。
     //
 
-    vec4 _texture1 = texture2D(u_texture1, uv);
-    vec4 _texture2 = texture2D(u_texture2, distortedPosition2);
+    vec4 _texture1 = texture2D(uTexture1, uv);
+    vec4 _texture2 = texture2D(uTexture2, distortedPosition2);
 
     vec4 finalTexture = mix(_texture1, _texture2, dispFactor);
     //mix(x, y, a)は、x(1-a)+y*aを返す（つまり線形補間）
@@ -101,6 +103,7 @@ interface Uniforms {
   imageResolution: Uniform;
   uTexture1: Uniform;
   uTexture2: Uniform;
+  uTexture3: Uniform;
   effectFactor: Uniform;
   dispFactor: Uniform;
 }
@@ -125,6 +128,10 @@ const uniforms: Uniforms = {
   uTexture2: {
     type: "t",
     value: null,
+  },
+  uTexture3: {
+    type: "t",
+    value: null
   },
   effectFactor: {
     type: "f",
@@ -210,7 +217,7 @@ const renderTick = (
   uniforms.time.value += 0.5;
 };
 
-const setImage = async (imageUrl: string, order: 1 | 2) => {
+const setImage = async (imageUrl: string, order: 1 | 2 | 3) => {
   const LoadImage = (url: string): Promise<THREE.Texture> =>
     new Promise((resolve, reject) => {
       const loader = new THREE.TextureLoader();
@@ -232,37 +239,47 @@ const setImage = async (imageUrl: string, order: 1 | 2) => {
   if (order === 2) {
     uniforms.uTexture2.value = texture;
   }
+  if (order === 3) {
+    uniforms.uTexture3.value = texture;
+  }
 };
 
 interface Props {
   sumbnails: string[];
 }
 
-const BUCKET_URL = process.env.REACT_APP_SICFLER_BUCKET_URL || "";
-
 const Background: React.FC<Props> = props => {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   useEffect(() => {
-    if (props.sumbnails[0] && props.sumbnails[1]) {
-      const loadImages = async () => {
-        await setImage(`${BUCKET_URL}/${props.sumbnails[0]}`, 1);
-        await setImage(`${BUCKET_URL}/${props.sumbnails[1]}`, 2);
-      };
+    const loadImages = async () => {
+      await setImage(`${process.env.PUBLIC_URL}/images/designScramble.jpeg`, 1);
+      await setImage(`${process.env.PUBLIC_URL}/images/seiho-aitai-12.jpg`, 2);
+      await setImage(`${process.env.PUBLIC_URL}/images/designScramble.jpeg`, 3);
+    };
 
-      loadImages().then(() => {
-        if (wrapperRef.current) {
-          const { renderer, scene, camera } = initThree();
-          wrapperRef.current.appendChild(renderer.domElement);
-          renderTick(renderer, scene, camera);
-        }
-      });
-    }
+    loadImages().then(() => {
+      if (wrapperRef.current) {
+        const { renderer, scene, camera } = initThree();
+        wrapperRef.current.appendChild(renderer.domElement);
+        renderTick(renderer, scene, camera);
+      }
+    });
 
     return () => {
       cancelAnimationFrame(anim);
     };
-  }, [wrapperRef.current, props.sumbnails]);
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      gsap.to(uniforms.dispFactor, 1.5, {
+          value: currentIndex
+      });
+      setCurrentIndex(currentIndex < 3 ? currentIndex + 1 : 0);
+    }, [10000]);
+  }, [currentIndex]);
 
   return <CanvasWrapper ref={wrapperRef} />;
 };
@@ -272,4 +289,8 @@ export default Background;
 const CanvasWrapper = styled.div`
   width: 100vw;
   height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  filter: blur(10px) grayscale(40%);
 `;

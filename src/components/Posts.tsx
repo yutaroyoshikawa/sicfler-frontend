@@ -5,6 +5,7 @@ import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 import { usePostsBySicflerIdQuery } from "../gen/graphql-client-api";
 import PostList from "./organisms/PostList";
+import Background from "./atoms/Background";
 
 const GET_USERINFO = gql`
   {
@@ -63,19 +64,13 @@ const Posts: React.FC = () => {
           })
         }
       />
-      {/* <Background
+      <Background
         sumbnails={postsQuery.data && postsQuery.data?.postsBySicflerId!.map(
           post => post?.sumbnail! as string
         ) || []}
-      /> */}
+      />
       <Entire>
-        <Wrap
-          sumbnailUrl={
-            (postsQuery.data?.postsBySicflerId[0] &&
-              `${BUCKET_URL}/${postsQuery.data?.postsBySicflerId[0]?.sumbnail}`) ||
-            ""
-          }
-        >
+        <Wrap>
           {postsQuery.data &&
             postsQuery.data.postsBySicflerId.length > 0 &&
             [...Array(row)].map((_, currentRow) => (
@@ -116,18 +111,11 @@ const Entire = styled.div`
 `;
 
 const Wrap = styled.div`
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   overflow: hidden;
 
   &::-webkit-scrollbar {
     display: none;
   }
-
-  ${(props: { sumbnailUrl: string }) => css`
-    background-image: url("${props.sumbnailUrl}");
-  `}
 
   &::before {
     content: "";
@@ -138,7 +126,6 @@ const Wrap = styled.div`
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(255, 255, 255, 0.7);
   }
 `;
 
