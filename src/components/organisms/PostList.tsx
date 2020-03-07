@@ -49,7 +49,7 @@ const PostList: React.FC<Props> = props => {
       ref={listRef}
       itemCount={ITEM_COUNT}
       width={window.innerWidth - 130}
-      height={490}
+      height={446}
       itemSize={506}
       direction={props.isReverse ? "rtl" : "ltr"}
       layout="horizontal"
@@ -71,7 +71,7 @@ const PostList: React.FC<Props> = props => {
         const prop = props.items[getItemIndex(index)];
 
         return (
-          <Wrap style={{ ...style }} isReverse={props.isReverse}>
+          <Wrap style={{ ...style }} isReverse={props.isReverse} onClick={() => console.log("clicked")}>
             <ListItemPost {...prop} />
           </Wrap>
         );
@@ -82,16 +82,22 @@ const PostList: React.FC<Props> = props => {
 
 export default PostList;
 
-const Wrap = styled.div`
+const Wrap = styled.bdo`
   ${(props: { isReverse: boolean }) =>
     props.isReverse &&
     css`
       direction: ltr;
+      
     `}
 `;
 
 const List = styled(FixedSizeList)`
+  pointer-events: auto !important;
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  & > div {
+    pointer-events: auto !important;
   }
 `;

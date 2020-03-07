@@ -18,12 +18,11 @@ const BUCKET_URL = process.env.REACT_APP_SICFLER_BUCKET_URL || "";
 
 const useLayout = () => {
   const [row, setRow] = useState<number>(0);
-  const POST_HEIGHT = 370;
-  const POST_HEIGHT_MARGIN = 30;
+  const POST_HEIGHT = 546;
 
   useLayoutEffect(() => {
     setRow(
-      Math.floor(window.innerHeight / (POST_HEIGHT_MARGIN * 2 + POST_HEIGHT))
+      Math.floor(window.innerHeight / POST_HEIGHT)
     );
   }, []);
 
@@ -108,6 +107,7 @@ const Entire = styled.div`
   height: 100vh;
   width: 100%;
   align-items: center;
+  overflow: hidden;
 `;
 
 const Wrap = styled.div`
@@ -116,20 +116,22 @@ const Wrap = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
-
-  &::before {
-    content: "";
-    display: block;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-  }
 `;
 
 const RowWrap = styled.div`
   position: relative;
   z-index: 3;
+  overflow: hidden;
+
+  &:first-child {
+    margin-top: 100px;
+  }
+
+  &:last-child {
+    margin-bottom: 100px;
+  }
+
+  &:not(:last-child):not(:first-child){
+    margin: 100px 0;
+  }
 `;
