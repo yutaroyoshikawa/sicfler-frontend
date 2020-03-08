@@ -8,6 +8,7 @@ import { ApolloClient } from "apollo-client";
 import { createHttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { setContext } from "apollo-link-context";
+import { initialState, resolvers, typeDefs } from "./localState";
 import Template from "./components/Template";
 import Posts from "./components/Posts";
 import FaceChecker from "./components/FaceChecker";
@@ -15,15 +16,7 @@ import PointerEffect from "./components/atoms/PointerEffect";
 
 const cache = new InMemoryCache();
 
-cache.writeData({
-  data: {
-    age: null,
-    gender: null,
-    isFocus: false,
-    focusLat: 0,
-    focusLng: 0
-  }
-})
+cache.writeData(initialState);
 
 const httpLink = createHttpLink({
   uri: "https://api.sicfler.com/v1/graphql",
@@ -42,23 +35,25 @@ const authLink = setContext((_, { headers }) => {
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache,
+  resolvers,
+  typeDefs,
 });
 
 const App: React.FC = () => {
   return (
     <>
-    <PointerEffect />
-    <Router>
-      <ApolloProvider client={client}>
-        <ApolloHooksProvider client={client}>
-          <GlobalStyle />
-          <Template>
-            <Posts />
-            <FaceChecker />
-          </Template>
-        </ApolloHooksProvider>
-      </ApolloProvider>
-    </Router>
+      <PointerEffect />
+      <Router>
+        <ApolloProvider client={client}>
+          <ApolloHooksProvider client={client}>
+            <GlobalStyle />
+            <Template>
+              <Posts />
+              <FaceChecker />
+            </Template>
+          </ApolloHooksProvider>
+        </ApolloProvider>
+      </Router>
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Post from "./Post";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
@@ -8,8 +8,14 @@ import PostList from "./organisms/PostList";
 import Background from "./atoms/Background";
 
 const GET_USERINFO = gql`
-  {
-    isFocus @client
+  query getIsFocus {
+    focusPost @client {
+      isFocus
+      geoLocation {
+        lat
+        lng
+      }
+    }
   }
 `;
 
@@ -21,13 +27,11 @@ const useLayout = () => {
   const POST_HEIGHT = 546;
 
   useLayoutEffect(() => {
-    setRow(
-      Math.floor(window.innerHeight / POST_HEIGHT)
-    );
+    setRow(Math.floor(window.innerHeight / POST_HEIGHT));
   }, []);
 
   return {
-    row
+    row,
   };
 };
 
@@ -44,7 +48,10 @@ const Posts: React.FC = () => {
   const onClickPost = (postId: string) => {
     local.client.writeData({
       data: {
-        isFocus: true,
+        focusPost: {
+          ...local.data.focusPost,
+          isFocus: true,
+        },
       },
     });
     setFocusPostId(postId);
@@ -53,20 +60,29 @@ const Posts: React.FC = () => {
   return (
     <>
       <Post
-        isFocus={local.data.isFocus}
+        isFocus={local.data.focusPost.isFocus}
         postId={focusPostId}
         handleInfocus={() =>
           local.client.writeData({
             data: {
-              isFocus: true,
+              focusPost: {
+                ...local.data.focusPost,
+                isFocus: true,
+              },
             },
           })
         }
       />
       <Background
-        sumbnails={postsQuery.data && postsQuery.data?.postsBySicflerId!.map(
-          post => post?.sumbnail! as string
-        ) || []}
+        // eslint-disable-next-line
+        sumbnails={
+          (postsQuery.data &&
+            postsQuery.data?.postsBySicflerId!.map(
+              post => post?.sumbnail! as string
+              // eslint-disable-next-line
+            )) ||
+          []
+        }
       />
       <Entire>
         <Wrap>
@@ -86,7 +102,7 @@ const Posts: React.FC = () => {
                     },
                     target: {
                       ageGroup: post?.target.ageGroup!,
-                      gender: post?.target.gender!
+                      gender: post?.target.gender!,
                     },
                     onClick: () => onClickPost(post?.id!),
                   }))}
@@ -131,7 +147,7 @@ const RowWrap = styled.div`
     margin-bottom: 100px;
   }
 
-  &:not(:last-child):not(:first-child){
+  &:not(:last-child):not(:first-child) {
     margin: 100px 0;
   }
 `;

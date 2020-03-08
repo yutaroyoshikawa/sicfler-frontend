@@ -6,8 +6,7 @@ let win: BrowserWindow | null = null;
 
 function createWindow() {
   win = new BrowserWindow({
-    fullscreen: true,
-    title: "SICFLER"
+    fullscreen: true
   });
 
   if (isDev) {

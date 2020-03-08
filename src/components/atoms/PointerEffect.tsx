@@ -84,10 +84,10 @@ const dotDraw = (dot: Dot, ctx: CanvasRenderingContext2D) => {
 
 let anim: number = 0;
 
-const updateCanvas = (context: CanvasRenderingContext2D) => {
+const updateCanvas = (context: CanvasRenderingContext2D): void => {
   context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-  [...Array(PARTICLE_LENGTH)].map((_, index) => {
+  // eslint-disable-next-line
+  [...Array(PARTICLE_LENGTH)].map((_, index): void => {
     const dot = updatedDot(dots[index]);
 
     if (
@@ -116,6 +116,7 @@ const PointerEffectCanvas: React.FC = () => {
     return () => {
       cancelAnimationFrame(anim);
     };
+    // eslint-disable-next-line
   }, [canvasRef.current]);
 
   return <Canvas width={CANVAS_WIDTH} height={CANVAS_HEIGHT} ref={canvasRef} />;
@@ -138,6 +139,7 @@ const PointerEffect: React.FC = () => {
         y: e.screenY,
       });
     });
+    // eslint-disable-next-line
   }, []);
 
   useMemo(() => {
@@ -145,6 +147,7 @@ const PointerEffect: React.FC = () => {
   }, [pointerCord]);
 
   useMemo(() => {
+    // eslint-disable-next-line
     timeout = setTimeout(() => {
       setVissibleEffect(false);
     }, 2000);

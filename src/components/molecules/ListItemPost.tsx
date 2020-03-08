@@ -6,9 +6,11 @@ import DateTime from "./DateTime";
 import OrnerIcon from "../atoms/OrnerIcon";
 
 const GET_USERINFO = gql`
-  {
-    age @client
-    gender @client
+  query getTargets {
+    targets @client {
+      age
+      gender
+    }
   }
 `;
 
@@ -48,8 +50,11 @@ const ListItemPost: React.FC<Props> = props => {
     <Wrap
       onClick={() => props.onClick()}
       isRecommend={
-        props.target.ageGroup < local.data.age &&
-        returnGender(props.target.gender) === local.data.gender
+        local.data.targets.some((target: any) => {
+          return props.target.ageGroup <= target.age &&
+          props.target.ageGroup + 10 >= target.age &&
+          returnGender(props.target.gender) === target.gender
+        })
       }
     >
       <Sumbnail imageUrl={`${BUCKET_URL}/${props.sumbnailUrl}`} />

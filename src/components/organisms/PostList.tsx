@@ -23,16 +23,17 @@ interface Props {
 }
 
 const ITEM_COUNT = 99999999999;
+let scrollAmount = 0;
 
 const PostList: React.FC<Props> = props => {
   const listRef = useRef<FixedSizeList>(null);
-  let interval = 0;
-  let scrollAmount = 0;
 
   useEffect(() => {
     const scrollInfinity = () => {
       listRef.current && listRef.current.scrollTo(scrollAmount++);
     };
+    let interval = 0;
+
     if (listRef.current) {
       interval = setInterval(() => {
         scrollInfinity();

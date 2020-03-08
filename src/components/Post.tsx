@@ -11,9 +11,14 @@ import DateTime from "./molecules/DateTime";
 import VisitorSlideShow from "./molecules/VisitorSlideShow";
 
 const GET_LOCAL_STATE = gql`
-  {
-    focusLat @client
-    focusLng @client
+  query getFocusPost {
+    focusPost @client {
+      isFocus
+      geoLocation {
+        lat
+        lng
+      }
+    }
   }
 `;
 
@@ -42,17 +47,24 @@ const Post: React.FC<Props> = props => {
         id: props.postId,
       });
     }
+    // eslint-disable-next-line
   }, [props.postId]);
 
   useMemo(() => {
     if (data && data.post) {
       local.client.writeData({
         data: {
-          focusLat: data.post.location?.lat,
-          focusLng: data.post.location?.lng,
+          focusPost: {
+            ...local.data.focusPost,
+            geoLocation: {
+              lat: data.post.location?.lat,
+              lng: data.post.location?.lng
+            }
+          }
         }
       })
     }
+    // eslint-disable-next-line
   }, [data])
 
   return (

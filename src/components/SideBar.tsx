@@ -11,10 +11,14 @@ import QrShare from "../components/atoms/QrShare";
 import * as CSS from "../commonStyles";
 
 const GET_LOCAL_STATE = gql`
-  {
-    isFocus @client
-    focusLat @client
-    focusLng @client
+  query getFocusPost {
+    focusPost @client {
+      isFocus
+      geoLocation {
+        lat
+        lng
+      }
+    }
   }
 `;
 
@@ -29,12 +33,16 @@ const SideBar: React.FC = () => {
     setTimeout(() => {
       setIsTimeOut(true);
     }, BUTTON_TRANSITION_DURATION);
-  }, [local.data.isFocus]);
+    // eslint-disable-next-line
+  }, [local.data.focusPost.isFocus]);
 
   const onClickInfocus = () => {
     local.client.writeData({
       data: {
-        isFocus: false,
+        focusPost: {
+          ...local.data.focusPost,
+          isFocus: false
+        }
       },
     });
   };
@@ -43,7 +51,7 @@ const SideBar: React.FC = () => {
     <Wrapper>
       <Clock />
       <CSSTransition
-        in={local.data.isFocus && isTimeOut}
+        in={local.data.focusPost.isFocus && isTimeOut}
         timeout={BUTTON_TRANSITION_DURATION}
         mountOnEnter={true}
         unmountOnExit={true}
@@ -55,14 +63,14 @@ const SideBar: React.FC = () => {
               <BackText>もどる</BackText>
             </BackButton>
             <QrShare
-              lat={local.data.focusLat}
-              lng={local.data.focusLng}
+              lat={local.data.focusPost.geoLocation.lat}
+              lng={local.data.focusPost.geoLocation.lng}
             />
           </IconWrapper>
         )}
       </CSSTransition>
       <CSSTransition
-        in={!local.data.isFocus && isTimeOut}
+        in={!local.data.focusPost.isFocus && isTimeOut}
         timeout={BUTTON_TRANSITION_DURATION}
         mountOnEnter={true}
         unmountOnExit={true}

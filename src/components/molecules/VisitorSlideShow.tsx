@@ -26,6 +26,7 @@ const VisitorSlideShow: React.FC<Props> = props => {
       setCurrentIndex(currentIndex === props.visitors.length - 1 ? 0 : currentIndex + 1);
       setIsVissible(true);
     }, TRANSITION_DURATION);
+    // eslint-disable-next-line
   }, [isVissible]);
 
   return (

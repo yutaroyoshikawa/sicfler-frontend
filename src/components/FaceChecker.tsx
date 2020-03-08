@@ -1,30 +1,31 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import * as faceApi from "face-api.js";
 
-const GET_FACEINFO = gql`
-  {
-    age @client
-    gender @client
+const CHANGE_TARGETS = gql`
+  mutation changeTargets($targets: [Target]!) {
+    updateTargets(targets: $targets) @client
   }
 `;
 
+interface Targets {
+  age: number,
+  gender: "male" | "female"
+}
+
 const FaceChecker: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { client } = useQuery(GET_FACEINFO);
+  const [targetsMutation] = useMutation(CHANGE_TARGETS);
 
   useEffect(() => {
-
-    const writeFaceInfo = (age: number | null, gender: "male" | "female" | null) => {
-      client.writeData({
-        data: {
-          age,
-          gender
+    const writeFaceInfo = (targets: Targets[]) => {
+      targetsMutation({
+        variables: {
+          targets
         }
       });
-      console.log(age);
     };
     
     navigator.mediaDevices.getUserMedia({ video: {} })
@@ -35,12 +36,15 @@ const FaceChecker: React.FC = () => {
           await faceApi.nets.ageGenderNet.loadFromUri(`${process.env.PUBLIC_URL}/models`);
           setInterval(async () => {
             if (videoRef.current) {
-              const result = await faceApi.detectSingleFace(videoRef.current)
+              const result = await faceApi.detectAllFaces(videoRef.current)
                 .withAgeAndGender().run();
               if (result) {
-                writeFaceInfo(result.age, result.gender);
+                writeFaceInfo(result.map(face => ({
+                  age: face.age,
+                  gender: face.gender
+                })));
               } else {
-                writeFaceInfo(null, null);
+                writeFaceInfo([]);
               }
             }
           }, 1000);
@@ -49,6 +53,7 @@ const FaceChecker: React.FC = () => {
       .catch(error => {
         console.error(error);
       });
+    // eslint-disable-next-line
   }, []);
 
   return <Video ref={videoRef} autoPlay={true} muted={true} playsInline={true} />;
