@@ -2,7 +2,7 @@ import React, { useState, useLayoutEffect } from "react";
 import styled from "styled-components";
 import Post from "./Post";
 import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import { usePostsBySicflerIdQuery } from "../gen/graphql-client-api";
 import PostList from "./organisms/PostList";
 import Background from "./atoms/Background";
@@ -16,6 +16,12 @@ const GET_USERINFO = gql`
         lng
       }
     }
+  }
+`;
+
+const CHANGE_FOCUS_POST = gql`
+  mutation changeFocusTarget($focusPost: FocusPost!) {
+    updateFocusPost(focusPost: $focusPost) @client
   }
 `;
 
@@ -37,6 +43,7 @@ const useLayout = () => {
 
 const Posts: React.FC = () => {
   const local = useQuery(GET_USERINFO);
+  const [focusPostMutation] = useMutation(CHANGE_FOCUS_POST);
   const [focusPostId, setFocusPostId] = useState<string>("");
   const { row } = useLayout();
   const postsQuery = usePostsBySicflerIdQuery({
@@ -46,30 +53,37 @@ const Posts: React.FC = () => {
   });
 
   const onClickPost = (postId: string) => {
-    local.client.writeData({
-      data: {
+    focusPostMutation({
+      variables: {
         focusPost: {
-          ...local.data.focusPost,
           isFocus: true,
-        },
-      },
+          geoLocation: {
+            lat: local.data.focusPost.geoLocation.lat,
+            lng: local.data.focusPost.geoLocation.lng
+          }
+        }
+      }
     });
     setFocusPostId(postId);
   };
 
   return (
     <>
+    {JSON.stringify(local.data.focusPost)}
       <Post
         isFocus={local.data.focusPost.isFocus}
         postId={focusPostId}
         handleInfocus={() =>
-          local.client.writeData({
-            data: {
+          focusPostMutation({
+            variables: {
               focusPost: {
-                ...local.data.focusPost,
-                isFocus: true,
-              },
-            },
+                isFocus: false,
+                geoLocation: {
+                  lat: local.data.focusPost.geoLocation.lat,
+                  lng: local.data.focusPost.geoLocation.lng
+                }
+              }
+            }
           })
         }
       />

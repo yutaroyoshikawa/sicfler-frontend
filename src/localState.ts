@@ -33,6 +33,11 @@ export const typeDefs = gql`
     lng: Float!
   }
 
+  input FocusPost {
+    isFocus: Boolean!
+    geoLocation: GeoLo
+  }
+
   type Target {
     age: Number!
     gender: Gender!
@@ -55,6 +60,7 @@ export const typeDefs = gql`
 
   extend type Mutation {
     updateTargets(targets: [TargetInput]!): [Target]!
+    updateFocusPost(focusPost: FocusPost!): FocusPost!
   }
 `;
 
@@ -72,6 +78,23 @@ export const resolvers: Resolvers = {
       cache.writeData({ data });
 
       return data.targets;
+    },
+    updateFocusPost: (_, args, { cache }) => {
+      const data = {
+        focusPost: {
+          isFocus: args.focusPost.isFocus,
+          geoLocation: {
+            lat: args.focusPost.geoLocation.lat,
+            lng: args.focusPost.geoLocation.lng,
+            __typename: "GeoLocation"
+          },
+          __typename: "FocusPost"
+        }
+      };
+
+      cache.writeData({ data });
+
+      return args.focusPost;
     }
   }
 };

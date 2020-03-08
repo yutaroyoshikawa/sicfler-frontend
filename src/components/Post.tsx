@@ -58,8 +58,10 @@ const Post: React.FC<Props> = props => {
             ...local.data.focusPost,
             geoLocation: {
               lat: data.post.location?.lat,
-              lng: data.post.location?.lng
-            }
+              lng: data.post.location?.lng,
+              __typename: "GeoLocation"
+            },
+            __typename: "FocusPost"
           }
         }
       })

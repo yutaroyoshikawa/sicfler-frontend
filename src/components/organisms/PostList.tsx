@@ -72,7 +72,7 @@ const PostList: React.FC<Props> = props => {
         const prop = props.items[getItemIndex(index)];
 
         return (
-          <Wrap style={{ ...style }} isReverse={props.isReverse} onClick={() => console.log("clicked")}>
+          <Wrap style={{ ...style }} isReverse={props.isReverse}>
             <ListItemPost {...prop} />
           </Wrap>
         );
