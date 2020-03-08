@@ -69,7 +69,6 @@ const Posts: React.FC = () => {
 
   return (
     <>
-    {JSON.stringify(local.data.focusPost)}
       <Post
         isFocus={local.data.focusPost.isFocus}
         postId={focusPostId}
