@@ -5,10 +5,10 @@ import { TransitionStatus } from "react-transition-group/Transition";
 import GoogleMapReact from "google-map-react";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
-import { usePostQuery, Visitor } from "../gen/graphql-client-api";
-import * as CSS from "../commonStyles";
-import DateTime from "./molecules/DateTime";
-import VisitorSlideShow from "./molecules/VisitorSlideShow";
+import { usePostQuery, Visitor } from "../../gen/graphql-client-api";
+import * as CSS from "../../commonStyles";
+import DateTime from "../molecules/DateTime";
+import VisitorSlideShow from "../molecules/VisitorSlideShow";
 
 const GET_LOCAL_STATE = gql`
   query getFocusPost {

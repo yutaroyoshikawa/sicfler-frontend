@@ -3,9 +3,9 @@ import styled from "styled-components";
 import Post from "./Post";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { usePostsBySicflerIdQuery } from "../gen/graphql-client-api";
-import PostList from "./organisms/PostList";
-import Background from "./atoms/Background";
+import { usePostsBySicflerIdQuery } from "../../gen/graphql-client-api";
+import PostList from "./PostList";
+import Background from "../atoms/Background";
 
 const GET_USERINFO = gql`
   query getIsFocus {

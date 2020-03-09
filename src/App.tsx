@@ -10,8 +10,8 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { setContext } from "apollo-link-context";
 import { initialState, resolvers, typeDefs } from "./localState";
 import Template from "./components/Template";
-import Posts from "./components/Posts";
-import FaceChecker from "./components/FaceChecker";
+import Posts from "./components/organisms/Posts";
+import FaceChecker from "./components/atoms/FaceChecker";
 import PointerEffect from "./components/atoms/PointerEffect";
 import LoadingAnim from "./components/atoms/LoadingAnim";
 

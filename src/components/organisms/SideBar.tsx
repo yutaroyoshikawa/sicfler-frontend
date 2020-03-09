@@ -6,9 +6,9 @@ import { TransitionStatus } from "react-transition-group/Transition";
 import { useQuery } from "@apollo/react-hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
-import Clock from "../components/Clock";
-import QrShare from "../components/atoms/QrShare";
-import * as CSS from "../commonStyles";
+import Clock from "../molecules/Clock";
+import QrShare from "../atoms/QrShare";
+import * as CSS from "../../commonStyles";
 
 const GET_LOCAL_STATE = gql`
   query getFocusPost {
