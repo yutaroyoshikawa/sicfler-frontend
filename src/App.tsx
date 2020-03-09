@@ -13,6 +13,7 @@ import Template from "./components/Template";
 import Posts from "./components/Posts";
 import FaceChecker from "./components/FaceChecker";
 import PointerEffect from "./components/atoms/PointerEffect";
+import LoadingAnim from "./components/atoms/LoadingAnim";
 
 const cache = new InMemoryCache();
 
@@ -47,6 +48,7 @@ const App: React.FC = () => {
         <ApolloProvider client={client}>
           <ApolloHooksProvider client={client}>
             <GlobalStyle />
+            <LoadingAnim />
             <Template>
               <Posts />
               <FaceChecker />

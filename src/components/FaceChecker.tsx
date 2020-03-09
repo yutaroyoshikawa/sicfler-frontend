@@ -1,12 +1,18 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import gql from "graphql-tag";
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation, useQuery } from "@apollo/react-hooks";
 import * as faceApi from "face-api.js";
 
 const CHANGE_TARGETS = gql`
   mutation changeTargets($targets: [Target]!) {
     updateTargets(targets: $targets) @client
+  }
+`;
+
+const GET_USERINFO = gql`
+  query getLoadState {
+    loading @client
   }
 `;
 
@@ -17,6 +23,7 @@ interface Targets {
 
 const FaceChecker: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { client } = useQuery(GET_USERINFO);
   const [targetsMutation] = useMutation(CHANGE_TARGETS);
 
   useEffect(() => {
@@ -34,6 +41,11 @@ const FaceChecker: React.FC = () => {
           videoRef.current.srcObject = stream;
           await faceApi.nets.ssdMobilenetv1.loadFromUri(`${process.env.PUBLIC_URL}/models`);
           await faceApi.nets.ageGenderNet.loadFromUri(`${process.env.PUBLIC_URL}/models`);
+          client.writeData({
+            data: {
+              loading: false
+            }
+          });
           setInterval(async () => {
             if (videoRef.current) {
               const result = await faceApi.detectAllFaces(videoRef.current)

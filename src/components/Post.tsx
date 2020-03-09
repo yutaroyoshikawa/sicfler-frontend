@@ -48,7 +48,15 @@ const Post: React.FC<Props> = props => {
       });
     }
     // eslint-disable-next-line
-  }, [props.postId]);
+  }, [local.data.focusPost.isFocus]);
+
+  useMemo(() => {
+    local.client.writeData({
+      data: {
+        loading: loading
+      }
+    });
+  }, [loading]);
 
   useMemo(() => {
     if (data && data.post) {
@@ -64,7 +72,7 @@ const Post: React.FC<Props> = props => {
             __typename: "FocusPost"
           }
         }
-      })
+      });
     }
     // eslint-disable-next-line
   }, [data])
@@ -75,7 +83,7 @@ const Post: React.FC<Props> = props => {
         timeout={MAP_TRANDISION_DURATION}
         unmountOnExit={true}
         mountOnEnter={true}
-        in={props.isFocus && data && data.post && !loading}
+        in={local.data.focusPost.isFocus && data && data.post && !loading}
       >
         {status => (
           <MapWrapper transitionStatus={status}>
@@ -92,10 +100,10 @@ const Post: React.FC<Props> = props => {
                 styles: mapStyle,
               }}
             >
-              {props.isFocus && data && data.post && !loading && (
+              {local.data.focusPost.isFocus && data && data.post && !loading && (
                 <Pin
-                  lat={data?.post.location?.lat!}
-                  lng={data?.post.location?.lng!}
+                  lat={local.data.focusPost.geoLocation?.lat!}
+                  lng={local.data.focusPost.geoLocation?.lng!}
                 />
               )}
             </GoogleMapReact>
@@ -103,7 +111,7 @@ const Post: React.FC<Props> = props => {
         )}
       </CSSTransition>
       <CSSTransition
-        in={props.isFocus && data && data.post && !loading}
+        in={local.data.focusPost.isFocus && data && data.post && !loading}
         timeout={POST_TRANSITION_DURATION}
         unmountOnExit={true}
         mountOnEnter={true}

@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 export const initialState = {
   data: {
     targets: [],
+    loading: true,
     focusPost: {
       isFocus: false,
       geoLocation: {
@@ -56,6 +57,7 @@ export const typeDefs = gql`
   extend type Query {
     targets: [Target]!
     focusPost: FocusPost!
+    loading: Boolean!
   }
 
   extend type Mutation {

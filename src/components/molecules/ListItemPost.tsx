@@ -51,8 +51,8 @@ const ListItemPost: React.FC<Props> = props => {
       onClick={() => props.onClick()}
       isRecommend={
         local.data.targets.some((target: any) => {
-          return props.target.ageGroup <= target.age &&
-          props.target.ageGroup + 10 >= target.age &&
+          return props.target.ageGroup <= target.age + 5 &&
+          props.target.ageGroup + 10 >= target.age - 5 &&
           returnGender(props.target.gender) === target.gender
         })
       }

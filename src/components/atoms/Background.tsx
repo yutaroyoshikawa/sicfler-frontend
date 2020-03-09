@@ -89,8 +89,8 @@ void main() {
 }
 `;
 
-const CANVAS_WIDTH = window.innerWidth;
-const CANVAS_HEIGHT = window.innerHeight;
+const CANVAS_WIDTH = window.innerWidth + 30;
+const CANVAS_HEIGHT = window.innerHeight + 30;
 
 interface Uniform {
   type: "f" | "v2" | "t";
@@ -281,16 +281,29 @@ const Background: React.FC<Props> = props => {
     }, [10000]);
   }, [currentIndex]);
 
-  return <CanvasWrapper ref={wrapperRef} />;
+  return (
+    <Entire>
+      <CanvasWrapper ref={wrapperRef} />
+    </Entire>
+  );
 };
 
 export default Background;
 
-const CanvasWrapper = styled.div`
+const Entire = styled.div`
   width: 100vw;
   height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
+  overflow: hidden;
+`;
+
+const CanvasWrapper = styled.div`
+  width: calc(100vw + 30px);
+  height: calc(100vh + 30px);
+  position: relative;
+  top: -15px;
+  left: -15px;
   filter: blur(10px) grayscale(40%);
 `;
